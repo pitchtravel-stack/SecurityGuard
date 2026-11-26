@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f5fa;--card:#fff;--ink:#0f1b2d;--muted:#5d6b80;--line:#e1e7f0;
+  --pri:#1d4ed8;--pri-d:#1e3a8a;--pri-50:#eaf1ff;
+  --ok:#0e8a4f;--ok-50:#e5f5ec;--bad:#c62828;--bad-50:#fdeceb;--warn:#a85d00;--warn-50:#fff3df;
+  --r:14px;--sh:0 1px 2px rgba(15,27,45,.06),0 4px 14px rgba(15,27,45,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sarabun',system-ui,sans-serif;font-size:16px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hidden{display:none!important}
+.muted{color:var(--muted)}.small{font-size:13.5px}.b{font-weight:700}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sb{justify-content:space-between}
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,var(--pri-d),var(--pri));color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.top .t{font-weight:700;font-size:17px;line-height:1.1}.top .s{font-size:12.5px;opacity:.85}
+.top .sp{flex:1}
+.top .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.chip-u{background:rgba(255,255,255,.16);border-radius:99px;padding:4px 10px;font-size:13.5px;white-space:nowrap;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:10px;width:36px;height:36px;display:grid;place-items:center;cursor:pointer}
+.wrap{max-width:720px;margin:0 auto;padding:14px 16px 90px}
+.wrap.wide{max-width:1180px}
+/* cards & buttons */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:14px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.btn.pri{background:var(--pri);color:#fff}.btn.pri:active{background:var(--pri-d)}
+.btn.line{background:#fff;border:1.5px solid var(--line);color:var(--pri-d)}
+.btn.soft{background:var(--pri-50);color:var(--pri-d)}
+.btn.warn{background:var(--bad);color:#fff}
+.btn.sm{min-height:34px;padding:6px 12px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}.btn.big{min-height:58px;font-size:17px;border-radius:14px}
+.btn:disabled{opacity:.55;cursor:wait}
+.link{background:none;border:0;color:var(--pri);font-weight:600;cursor:pointer;padding:4px 0}
+label.f{display:block;font-weight:600;font-size:14.5px;margin:14px 0 6px}
+.req{color:var(--bad)}
+input.in,select.in,textarea.in{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff;min-height:44px;outline:none}
+input.in:focus,select.in:focus,textarea.in:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-50)}
+.seg{display:flex;background:var(--pri-50);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-weight:600;color:var(--pri-d);cursor:pointer}
+.seg button.on{background:#fff;box-shadow:var(--sh)}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg2 button{border:2px solid var(--line);background:#fff;border-radius:12px;min-height:54px;font-weight:700;font-size:17px;cursor:pointer}
+.seg2 button.on.ok{border-color:var(--ok);background:var(--ok-50);color:var(--ok)}
+.seg2 button.on.bad{border-color:var(--bad);background:var(--bad-50);color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipb{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 12px;cursor:pointer;font-size:14.5px}
+.chipb.on{border-color:var(--pri);background:var(--pri-50);color:var(--pri-d);font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:2px 9px;font-size:13px;font-weight:600;background:#eef2f7;color:var(--muted);white-space:nowrap}
+.pill.ok{background:var(--ok-50);color:var(--ok)}.pill.bad{background:var(--bad-50);color:var(--bad)}.pill.warn{background:var(--warn-50);color:var(--warn)}.pill.pri{background:var(--pri-50);color:var(--pri-d)}
+
+/* --- โหมดส่งไว --- */
+.ob{position:sticky;top:56px;z-index:18;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pri-50);color:var(--pri-d);padding:8px 16px;font-size:14px;font-weight:600}
+.ob.bad{background:var(--bad-50);color:var(--bad)}
+.dotspin{display:inline-block;width:12px;height:12px;border:2px solid rgba(29,78,216,.25);border-top-color:var(--pri);border-radius:50%;animation:sp .9s linear infinite;vertical-align:-2px}
+.cp{position:relative}.cp input,.nxbtn input,.ph-add-sm input{display:none}
+.nxbtn{display:block;margin:14px 0 0;background:linear-gradient(135deg,#0e8a4f,#0b6f40);color:#fff;border-radius:16px;padding:14px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(14,138,79,.28)}
+.nxbtn:active{transform:translateY(1px)}
+.nx{display:grid;gap:2px}.nx-l{font-size:13.5px;opacity:.9}.nx-n{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}.nx-s{font-size:13px;opacity:.85}
+.done-all{margin:14px 0 0;background:var(--ok-50);color:var(--ok);border-radius:14px;padding:12px 14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.water{background:#0e7490;color:#fff;margin-bottom:6px}.pill.water{background:#e0f2fe;color:#0e7490}.fi .dot.water{background:#0891b2}
+.stepper{display:flex;align-items:center;gap:10px}.stepper button{width:52px;height:52px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:26px;font-weight:700;color:var(--pri-d);cursor:pointer}.stepper input{width:90px;text-align:center;font-size:24px;font-weight:700}
+.wl{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}.wl:last-child{border-bottom:0}.wl .nm{flex:1;min-width:0}.wl .v{font-weight:700;white-space:nowrap}
+.qshot{display:flex;gap:12px;margin:12px 0 16px}
+.qshot img{width:40%;max-width:170px;border-radius:12px;border:1px solid var(--line);object-fit:cover}
+.qshot>div{display:grid;gap:8px;align-content:start}
+.ph-add-sm{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:600;color:var(--pri)}
+.saved{background:var(--ok-50);color:var(--ok);border-radius:12px;padding:12px;font-weight:600;display:flex;align-items:center;gap:8px;margin:10px 0}
+/* login */
+.login-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;background:radial-gradient(1200px 500px at 50% -10%,#cfe0ff,transparent),var(--bg)}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+.brand .logo{width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,var(--pri),var(--pri-d));color:#fff;display:grid;place-items:center}
+.brand .logo svg{width:30px;height:30px}
+.brand-t{font-size:24px;font-weight:700;color:var(--pri-d);line-height:1.1}.brand-s{color:var(--muted);font-size:14px}
+.login{width:100%;max-width:420px}
+.staff-list{max-height:46vh;overflow:auto;display:grid;gap:8px;margin-top:10px}
+.staff-btn{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;text-align:left;cursor:pointer}
+.staff-btn:hover{border-color:var(--pri)}
+.av{width:38px;height:38px;border-radius:50%;background:var(--pri-50);color:var(--pri-d);display:grid;place-items:center;font-weight:700;flex:none}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin:16px 0}
+.pin-dots i{width:15px;height:15px;border-radius:50%;border:2px solid var(--pri);display:block}
+.pin-dots i.f{background:var(--pri)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad button{min-height:58px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:24px;font-weight:600;cursor:pointer}
+.pad button:active{background:var(--pri-50)}
+.pad .go{background:var(--pri);color:#fff;border-color:var(--pri);font-size:16px}
+.demo{margin-top:14px;max-width:420px;width:100%;font-size:13.5px;background:#fff8e6;border:1px dashed #e2b659;border-radius:12px;padding:10px 12px;color:#6d4a00}
+/* guard */
+.hero{background:linear-gradient(135deg,var(--pri-d),var(--pri));color:#fff;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(29,78,216,.25)}
+.hero .clock{font-size:46px;font-weight:700;letter-spacing:1px;line-height:1.1;margin:4px 0}
+.hero .badge{background:#fff;color:var(--pri-d);border-radius:99px;padding:2px 12px;font-weight:700}
+.hero .hs{opacity:.9;font-size:14.5px}
+.prog{height:10px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden;margin:10px 0 6px}
+.prog>i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s}
+.act2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+h3.sec{font-size:16px;margin:20px 2px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.cp-list{display:grid;gap:8px}
+.cp{display:flex;align-items:center;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;text-align:left;width:100%}
+.cp .n{font-weight:700}.cp .z{font-size:13.5px;color:var(--muted)}
+.cp>div:nth-child(2){flex:1;min-width:0}
+.cp .st{margin-left:auto;flex:none;max-width:48%;text-align:right}.cp .st .pill{white-space:normal}
+.cp.todo{border-left:5px solid var(--pri)}
+.cp.done{border-left:5px solid var(--ok);background:#fbfefc}
+.cp.bad{border-left:5px solid var(--bad);background:#fffafa}
+.cp.skip{opacity:.7;border-left:5px solid var(--line)}
+.cp .num{width:34px;height:34px;border-radius:10px;background:var(--pri-50);color:var(--pri-d);display:grid;place-items:center;font-weight:700;flex:none}
+.cp.done .num{background:var(--ok-50);color:var(--ok)}.cp.bad .num{background:var(--bad-50);color:var(--bad)}
+.slots{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.slot{border-radius:10px;padding:6px 2px;text-align:center;font-size:12.5px;background:#fff;border:1.5px solid var(--line)}
+.slot b{display:block;font-size:14px}
+.slot.full{background:var(--ok-50);border-color:#b8e2c9;color:var(--ok)}
+.slot.part{background:var(--warn-50);border-color:#f0d19f;color:var(--warn)}
+.slot.none{background:var(--bad-50);border-color:#f3c1bd;color:var(--bad)}
+.slot.cur{border:2px solid var(--pri);color:var(--pri-d);background:var(--pri-50)}
+.slot.fut{color:#a3adbb}
+.feed{display:grid;gap:8px}
+.fi{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.fi .tm{font-weight:700;min-width:44px;color:var(--pri-d)}
+.fi .dot{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:none;background:var(--ok)}
+.fi .dot.bad{background:var(--bad)}.fi .dot.inc{background:var(--warn)}
+.empty{color:var(--muted);text-align:center;padding:18px;background:#fff;border:1px dashed var(--line);border-radius:12px}
+/* photos */
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.ph{position:relative;width:96px;height:96px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph button{position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:24px;height:24px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1}
+.ph-add{width:96px;height:96px;border-radius:12px;border:2px dashed #9db5e8;background:var(--pri-50);color:var(--pri-d);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;text-align:center}
+.ph-add input{display:none}
+.gallery img{width:100%;border-radius:12px;margin-bottom:10px;border:1px solid var(--line)}
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(15,27,45,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:94vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:up .18s ease-out}
+.sheet.wide{max-width:1000px;height:94vh}
+@keyframes up{from{transform:translateY(30px);opacity:.4}}
+.sheet-hd{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet-hd h3{margin:0;font-size:18px;flex:1}
+.x{border:0;background:#eef2f7;border-radius:10px;width:36px;height:36px;font-size:22px;cursor:pointer}
+.sheet-bd{padding:4px 16px 20px;overflow:auto;flex:1}
+.sheet.wide .sheet-bd{display:flex;flex-direction:column;padding-top:12px}
+@media(min-width:760px){.modal{align-items:center}.sheet{border-radius:20px}}
+iframe.rep{flex:1;width:100%;min-height:60vh;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:80;display:grid;gap:8px;width:min(92vw,420px)}
+.tst{background:var(--ink);color:#fff;border-radius:12px;padding:11px 14px;box-shadow:var(--sh);animation:up .2s}
+.tst.bad{background:var(--bad)}.tst.ok{background:var(--ok)}
+.spin{width:28px;height:28px;border:3px solid var(--pri-50);border-top-color:var(--pri);border-radius:50%;animation:sp 1s linear infinite;margin:30px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* admin */
+.tabs{position:sticky;top:56px;z-index:15;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:0 12px}
+.tabs button{border:0;background:none;padding:12px 12px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer}
+.tabs button.on{color:var(--pri-d);border-color:var(--pri)}
+.pane-hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+.pane-hd h2{margin:0;font-size:21px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi .l{font-size:14px;color:var(--muted);font-weight:600}.kpi .v{font-size:32px;font-weight:700;line-height:1.15}.kpi .d{font-size:13px;color:var(--muted)}
+.kpi.ok .v{color:var(--ok)}.kpi.bad .v{color:var(--bad)}.kpi.warn .v{color:var(--warn)}.kpi.pri .v{color:var(--pri-d)}
+.kpi.click{cursor:pointer}.kpi.click:hover{border-color:var(--pri)}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.g2{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;margin-top:10px}
+.card h3{margin:0 0 10px;font-size:16px}
+.bar{height:9px;border-radius:99px;background:#e9eef6;overflow:hidden;flex:1}
+.bar>i{display:block;height:100%;background:var(--pri);border-radius:99px}
+.bar.ok>i{background:var(--ok)}.bar.warn>i{background:#e39b25}.bar.bad>i{background:var(--bad)}
+.shiftc .cov{display:flex;align-items:center;gap:10px;margin:10px 0 4px}.shiftc .cov b{font-size:22px;min-width:56px;text-align:right}
+.trend{display:flex;align-items:flex-end;gap:8px;height:170px;padding-top:18px}
+.tcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.tcol .tb{width:70%;max-width:38px;background:var(--pri);border-radius:6px 6px 0 0;min-height:2px}
+.tcol .tv{font-size:12.5px;font-weight:700;color:var(--pri-d)}
+.tcol .tl{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap}
+.tcol .te{font-size:11.5px;color:var(--bad);font-weight:700;height:16px}
+.hb{display:grid;grid-template-columns:1fr 2fr 36px;gap:8px;align-items:center;font-size:14.5px;margin:7px 0}
+.hb .bar>i{background:var(--bad)}
+.item{display:grid;gap:6px;margin-bottom:10px}
+.item .t{font-weight:700;font-size:16.5px}
+.item .fol{display:grid;grid-template-columns:170px 1fr auto;gap:8px;margin-top:4px}
+.toolbar{position:sticky;top:104px;z-index:10;background:var(--bg);padding:8px 0;margin-bottom:6px}
+.filters{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:8px;align-items:end}
+.filters label{font-size:13px;font-weight:600;color:var(--muted)}
+table.t{width:100%;border-collapse:collapse;background:#fff}
+table.t th,table.t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:15px;vertical-align:middle}
+table.t th{background:#f6f8fc;font-size:13.5px;color:var(--muted)}
+.tw{overflow:auto;border:1px solid var(--line);border-radius:var(--r)}
+.inactive td{color:#9aa4b2}
+@media(max-width:860px){
+  .kpis{grid-template-columns:repeat(2,1fr)}.g3,.g2{grid-template-columns:1fr}
+  .filters{grid-template-columns:1fr 1fr}.item .fol{grid-template-columns:1fr}
+  .kpi .v{font-size:26px}.toolbar{top:100px}
+}
+@media(max-width:420px){.slots{grid-template-columns:repeat(4,1fr)}.hero .clock{font-size:40px}}
+</style>
+</head>
+<body>
+<div id="app"><div class="spin"></div></div>
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+  <div class="sheet" id="sheet"><div class="sheet-hd"><h3 id="mTitle"></h3><button class="x" onclick="closeModal()" aria-label="ปิด">×</button></div><div class="sheet-bd" id="mBody"></div></div>
+</div>
+<div id="toast"></div>
+<script>
+/* ================= ตั้งค่า ================= */
+const UI_VERSION = 'v2.0 (26 พ.ย. 69)';   // ต้องตรงกับ APP_VERSION ใน Core.gs
+/* ⚙️ URL ของ web app (ลงท้าย /exec) จาก Deploy > Manage deployments — ใช้เมื่อวางไฟล์นี้บน GitHub Pages */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwNDcUdQSHfrA2T_2vKd5xRPk6kr95GOe5i5goMh5zKcOKBsqr6N2D3vWfL4AzbtXj6/exec';
+const VIA_GAS = !!(window.google && google.script && google.script.run);
+const REMOTE = !VIA_GAS && /^https:\/\/script\.google\.com\/.+\/exec$/.test(API_URL) && API_URL.indexOf('ใส่รหัส') < 0;
+/* ลิงก์จาก QR จุดตรวจ (?cp=CP01) */
+window.DEEP_CP = (new URLSearchParams(location.search).get('cp') || '').replace(/[^A-Za-z0-9_-]/g, '');
+if (VIA_GAS && google.script.url) google.script.url.getLocation(l => { const v = (l.parameter && l.parameter.cp) || ''; if (v) window.DEEP_CP = String(v).replace(/[^A-Za-z0-9_-]/g, ''); });
+/** กุญแจประจำเครื่อง (สุ่มครั้งแรกแล้วเก็บในเครื่อง) — ใช้ยืนยันว่าเป็นเครื่องที่หัวหน้าอนุมัติแล้ว */
+function devKey() {
+  try {
+    let k = localStorage.getItem('sr_dev');
+    if (!k || !/^[a-f0-9]{48}$/.test(k)) {
+      const a = new Uint8Array(24); crypto.getRandomValues(a);
+      k = Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+      localStorage.setItem('sr_dev', k);
+    }
+    return k;
+  } catch (e) { return ''; }
+}
+function devName() {
+  const u = navigator.userAgent;
+  const os = /iPhone/.test(u) ? 'iPhone' : /iPad/.test(u) ? 'iPad' : /Android/.test(u) ? 'Android' : /Windows/.test(u) ? 'Windows' : /Mac/.test(u) ? 'Mac' : 'อื่น ๆ';
+  const br = /Line\//.test(u) ? 'LINE' : /Edg/.test(u) ? 'Edge' : /CriOS|Chrome/.test(u) ? 'Chrome' : /FxiOS|Firefox/.test(u) ? 'Firefox' : /Safari/.test(u) ? 'Safari' : '';
+  return os + (br ? ' · ' + br : '');
+}
+</script>
+<script>
+/* ================= state & helpers ================= */
+const ST = { token: null, user: null, info: null, home: null, tab: 'dash', form: null, pin: '', pick: null, loginMode: 'staff' };
+const store = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) { } }
+};
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const p2 = (n) => String(n).padStart(2, '0');
+const MON = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const thD = (ymd, short) => { const [y, m, d] = String(ymd).split('-').map(Number); return d + ' ' + MON[m - 1] + (short ? '' : ' ' + (y + 543)); };
+const hm = (ts) => String(ts || '').slice(11, 16);
+const shiftName = (c) => (ST.info.shifts.find(s => s.code === c) || {}).name || c;
+const initials = (n) => String(n).replace(/^(นาย|นางสาว|นาง|น\.ส\.)\s*/, '').trim().slice(0, 2);
+const ICONS = {
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
+  alert: '<path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>', pin: '<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  cam: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+  check: '<path d="M20 6L9 17l-5-5"/>', swap: '<path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  drop: '<path d="M12 2.7s-6.5 7.1-6.5 11.8a6.5 6.5 0 0 0 13 0C18.5 9.8 12 2.7 12 2.7z"/>',
+  refresh: '<path d="M23 4v6h-6"/><path d="M20.5 15a9 9 0 1 1-2.1-9.4L23 10"/>'
+};
+const ic = (n) => '<svg class="i" viewBox="0 0 24 24">' + ICONS[n] + '</svg>';
+
+function call(action, payload) {
+  return new Promise((resolve, reject) => {
+    const done = (raw) => {
+      let r; try { r = JSON.parse(raw); } catch (e) { return reject(new Error('ตอบกลับไม่ถูกต้อง')); }
+      if (r.ok) return resolve(r.data);
+      if (r.error === 'SESSION_EXPIRED') { toast('หมดเวลาใช้งาน กรุณาเข้าสู่ระบบใหม่', 'bad'); logout(true); return reject(new Error('หมดเวลาใช้งาน')); }
+      const err = new Error(r.error); err.server = true; reject(err);
+    };
+    if (VIA_GAS) {
+      google.script.run.withSuccessHandler(done).withFailureHandler(e => reject(new Error(e.message || 'เชื่อมต่อไม่สำเร็จ'))).api(action, ST.token, payload || {});
+    } else if (REMOTE) {
+      fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, token: ST.token, payload: payload || {} }) })
+        .then(r => { if (!r.ok) throw new Error('เซิร์ฟเวอร์ตอบกลับผิดพลาด (' + r.status + ')'); return r.text(); })
+        .then(done, e => reject(new Error(/เซิร์ฟเวอร์/.test(e.message) ? e.message : 'เชื่อมต่อไม่สำเร็จ — ตรวจสอบอินเทอร์เน็ต')));
+    } else if (window.MOCK_API) window.MOCK_API(action, ST.token, payload || {}).then(done, reject);
+    else reject(new Error('ไม่พบ backend'));
+  });
+}
+function toast(msg, type) {
+  const d = document.createElement('div'); d.className = 'tst ' + (type || ''); d.textContent = msg;
+  $('#toast').appendChild(d); setTimeout(() => d.remove(), 3200);
+}
+function openModal(title, html, wide) {
+  $('#mTitle').textContent = title; $('#mBody').innerHTML = html;
+  $('#sheet').className = 'sheet' + (wide ? ' wide' : ''); $('#modal').classList.remove('hidden');
+}
+function closeModal() { $('#modal').classList.add('hidden'); $('#mBody').innerHTML = ''; ST.form = null; }
+async function busy(btn, fn) {
+  const t = btn.innerHTML; btn.disabled = true; btn.innerHTML = 'กำลังบันทึก…';
+  try { await fn(); } catch (e) { toast(e.message, 'bad'); } finally { if (document.body.contains(btn)) { btn.disabled = false; btn.innerHTML = t; } }
+}
+function topbar(sub) {
+  return '<header class="top"><div class="logo">' + ic('shield') + '</div><div><div class="t">SecureRound <span style="font-size:11px;font-weight:500;opacity:.75">' + UI_VERSION + '</span></div><div class="s">' + esc(sub) + '</div></div><div class="sp"></div>' +
+    '<span class="chip-u">' + esc(ST.user.name) + '</span><button class="icon-btn" title="ออกจากระบบ" onclick="logout()">' + ic('out') + '</button></header>';
+}
+
+/* ================= boot & login ================= */
+async function init() {
+  try { ST.info = await call('bootstrap'); } catch (e) { $('#app').innerHTML = '<div class="wrap"><div class="empty">โหลดระบบไม่สำเร็จ: ' + esc(e.message) + '</div></div>'; return; }
+  ST.token = store.get('sr_token');
+  if (ST.token) { try { ST.user = await call('me'); return route(); } catch (e) { ST.token = null; store.set('sr_token', null); } }
+  renderLogin();
+}
+function route() { if (ST.user.role === 'guard') { OB.load(); loadGuard(); setTimeout(() => OB.flush(), 800); } else adminView(); }
+async function logout(silent) {
+  if (!silent && ST.user && ST.user.role === 'guard' && OB.mine().length && !ST.forceOut) {
+    ST.forceOut = true; setTimeout(() => { ST.forceOut = false; }, 4000);
+    return toast('ยังมีข้อมูลรอส่ง ' + OB.mine().length + ' รายการ — รอให้ส่งเสร็จก่อน (กดออกซ้ำอีกครั้งเพื่อออกทันที ข้อมูลยังเก็บในเครื่อง)', 'bad');
+  }
+  ST.forceOut = false;
+  if (!silent) { try { await call('logout'); } catch (e) { } }
+  clearInterval(ST.timer); clearInterval(ST.clock);
+  ST.token = null; ST.user = null; store.set('sr_token', null); closeModal(); renderLogin();
+}
+function renderLogin(mode) {
+  if (mode) { ST.loginMode = mode; ST.pick = null; ST.pin = ''; }
+  const m = ST.loginMode;
+  let body;
+  if (m === 'user') {
+    body = '<label class="f">ชื่อผู้ใช้</label><input class="in" id="lu" autocomplete="username">' +
+      '<label class="f">รหัสผ่าน</label><input class="in" id="lp" type="password" autocomplete="current-password">' +
+      '<label class="f">PIN</label><input class="in" id="lpin" type="password" inputmode="numeric" maxlength="6" placeholder="4–6 หลัก" onkeydown="if(event.key===\'Enter\')userLogin(this)">' +
+      '<button class="btn pri block" style="margin-top:18px" onclick="userLogin(this)">เข้าสู่ระบบ</button>';
+  } else if (!ST.pick) {
+    body = '<label class="f">เลือกชื่อของท่าน</label><input class="in" placeholder="ค้นหาชื่อ…" oninput="filterStaff(this.value)">' +
+      '<div class="staff-list" id="staffList">' + staffButtons('') + '</div>';
+  } else {
+    body = '<div class="row" style="margin-top:14px"><div class="av">' + esc(initials(ST.pick.name)) + '</div><div><div class="b">' + esc(ST.pick.name) + '</div><div class="muted small">' + esc(ST.pick.position || '') + '</div></div>' +
+      '<button class="link" style="margin-left:auto" onclick="ST.pick=null;ST.pin=\'\';renderLogin()">' + ic('swap') + '</button></div>' +
+      '<div class="pin-dots" id="dots"></div><div class="pad">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => '<button onclick="pinKey(\'' + n + '\')">' + n + '</button>').join('') +
+      '<button onclick="pinKey(\'del\')" style="font-size:18px">ลบ</button><button onclick="pinKey(\'0\')">0</button><button class="go" id="pinGo" onclick="staffLogin(this)">เข้าสู่ระบบ</button></div>';
+  }
+  $('#app').innerHTML = '<div class="login-wrap"><div class="brand"><div class="logo">' + ic('shield') + '</div><div><div class="brand-t">SecureRound</div><div class="brand-s">' + esc(ST.info.app) + '<br>' + esc(ST.info.hospital) + '</div></div></div>' +
+    '<div class="card login"><div class="muted small" style="text-align:right;margin:-4px 0 6px">' + UI_VERSION + '</div><div class="seg"><button class="' + (m === 'staff' ? 'on' : '') + '" onclick="renderLogin(\'staff\')">เจ้าหน้าที่ รปภ.</button><button class="' + (m === 'user' ? 'on' : '') + '" onclick="renderLogin(\'user\')">ผู้ดูแล / ผู้บริหาร</button></div>' + body + '</div>' +
+    (window.MOCK_API ? '<div class="demo"><b>โหมดสาธิต</b> (ข้อมูลจำลอง ไม่บันทึกจริง)<br>รปภ.: เลือกชื่อใดก็ได้ PIN <b>1234</b><br>Admin: <b>admin</b> / <b>Admin@1234</b> / PIN <b>123456</b><br>ผู้บริหาร: <b>director</b> / <b>Exec@1234</b> / PIN <b>654321</b></div>' : '') + '</div>';
+  if (ST.pick) drawDots();
+}
+function staffButtons(q) {
+  const list = ST.info.staff.filter(s => !q || s.name.indexOf(q) >= 0);
+  return list.map(s => '<button class="staff-btn" onclick="pickStaff(\'' + s.staff_id + '\')"><div class="av">' + esc(initials(s.name)) + '</div><div><div class="b">' + esc(s.name) + '</div><div class="muted small">' + esc(s.position || '') + '</div></div></button>').join('') || '<div class="empty">ไม่พบรายชื่อ</div>';
+}
+function filterStaff(q) { $('#staffList').innerHTML = staffButtons(q.trim()); }
+function pickStaff(id) { ST.pick = ST.info.staff.find(s => s.staff_id === id); ST.pin = ''; renderLogin(); }
+function drawDots() { $('#dots').innerHTML = [0, 1, 2, 3, 4, 5].map(i => '<i class="' + (i < ST.pin.length ? 'f' : '') + '"></i>').join(''); }
+function pinKey(k) { if (k === 'del') ST.pin = ST.pin.slice(0, -1); else if (ST.pin.length < 6) ST.pin += k; drawDots(); }
+async function staffLogin(btn) {
+  if (ST.pin.length < 4) return toast('กรุณาใส่ PIN อย่างน้อย 4 หลัก', 'bad');
+  await busy(btn, async () => {
+    const pin = ST.pin;
+    try {
+      const r = await call('login', { type: 'staff', staff_id: ST.pick.staff_id, pin, dev: devKey(), ua: devName() });
+      if (r.pending) { ST.pendPin = pin; ST.pin = ''; return renderPending(r); }
+      afterLogin(r);
+    }
+    catch (e) { ST.pin = ''; if ($('#dots')) drawDots(); throw e; }
+  });
+}
+/** เครื่องนี้ยังไม่ได้รับอนุมัติ — แสดงรหัสเครื่องให้ รปภ. แจ้งหัวหน้า */
+function renderPending(r) {
+  const rev = r.status === 'revoked', inLine = /Line\//.test(navigator.userAgent);
+  $('#app').innerHTML = '<div class="login-wrap"><div class="brand"><div class="logo">' + ic('shield') + '</div><div><div class="brand-t">SecureRound</div><div class="brand-s">' + esc(r.name) + '</div></div></div>' +
+    '<div class="card login" style="text-align:center">' +
+    (rev ? '<div class="pill bad" style="font-size:15px">เครื่องนี้ถูกยกเลิกสิทธิ์</div><p>กรุณาติดต่อหัวหน้างานหากต้องการใช้เครื่องนี้อีกครั้ง</p>'
+      : '<div class="b" style="font-size:18px">รอหัวหน้าอนุมัติเครื่องนี้</div><p class="muted small" style="margin:6px 0 0">ใช้ครั้งแรกบนเครื่องนี้ แจ้งหัวหน้างานพร้อมรหัสเครื่องด้านล่าง</p>') +
+    '<div style="font-size:44px;font-weight:700;letter-spacing:10px;color:var(--pri-d);margin:14px 0;font-family:monospace">' + esc(r.code) + '</div>' +
+    '<div class="muted small">' + esc(devName()) + '</div>' +
+    (inLine ? '<div class="card" style="background:var(--warn-50);border:0;margin-top:12px;text-align:left;color:var(--warn)">ตอนนี้เปิดอยู่ในแอป LINE — แนะนำให้กด ⋯ แล้วเลือก "เปิดในเบราว์เซอร์" (Safari/Chrome) ก่อนขออนุมัติ ไม่งั้นต้องขออนุมัติใหม่ทุกครั้งที่เปิดจากเบราว์เซอร์</div>' : '') +
+    (rev ? '' : '<button class="btn pri block" style="margin-top:16px" onclick="retryPending(this)">' + ic('refresh') + 'หัวหน้าอนุมัติแล้ว — เข้าสู่ระบบ</button>') +
+    '<button class="link" style="margin-top:10px" onclick="ST.pendPin=\'\';ST.pick=null;renderLogin()">กลับหน้าเลือกชื่อ</button></div></div>';
+}
+async function retryPending(btn) {
+  await busy(btn, async () => {
+    const r = await call('login', { type: 'staff', staff_id: ST.pick.staff_id, pin: ST.pendPin, dev: devKey(), ua: devName() });
+    if (r.pending) { renderPending(r); return toast(r.status === 'revoked' ? 'เครื่องนี้ถูกยกเลิกสิทธิ์' : 'ยังไม่ได้รับอนุมัติ — แจ้งหัวหน้ารหัส ' + r.code, 'bad'); }
+    afterLogin(r);
+  });
+}
+async function userLogin(btn) {
+  await busy(btn, async () => {
+    const r = await call('login', { type: 'user', username: $('#lu').value, password: $('#lp').value, pin: $('#lpin').value });
+    afterLogin(r);
+  });
+}
+function afterLogin(r) { ST.pendPin = ''; ST.token = r.token; ST.user = r.user; store.set('sr_token', r.token); ST.pin = ''; ST.pick = null; toast('ยินดีต้อนรับ ' + r.user.name, 'ok'); route(); }
+
+/* ================= guard (โหมดส่งไว) ================= */
+/* คิวส่งงานเบื้องหลัง: กดบันทึกแล้วขึ้นผลทันที ไม่ต้องรอเซิร์ฟเวอร์ ถ้าเน็ตหลุดจะส่งซ้ำให้เอง */
+const OB = {
+  q: [], sending: false, err: '', timer: null,
+  load() { try { OB.q = JSON.parse(localStorage.getItem('sr_ob') || '[]'); } catch (e) { OB.q = []; } },
+  save() { try { localStorage.setItem('sr_ob', JSON.stringify(OB.q)); } catch (e) { } },
+  mine() { return ST.user ? OB.q.filter(i => i.sid === ST.user.id) : []; },
+  drop(it) { const k = OB.q.indexOf(it); if (k >= 0) OB.q.splice(k, 1); },
+  add(item) {
+    item.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    item.sid = ST.user.id;                       // ผูกกับ รปภ. ที่บันทึก — คนอื่นล็อกอินเครื่องเดียวกันจะไม่ส่งแทน
+    item.payload.uid = item.uid; item.row.uid = item.uid;
+    OB.q.push(item); OB.save(); OB.flush();
+  },
+  async flush() {
+    if (OB.sending || !ST.user || ST.user.role !== 'guard' || !OB.mine().length) return;
+    OB.sending = true; OB.err = ''; obBar();
+    let cur = null;
+    try {
+      const batch = OB.mine().filter(i => i.type === 'patrol').slice(0, ST.info.maxBatch || 8);
+      if (batch.length) {
+        const res = await call('savePatrolBatch', { items: batch.map(i => i.payload) });
+        cur = batch;
+        batch.forEach(OB.drop);
+        if (res.failed && res.failed.length) toast('ส่งไม่สำเร็จ ' + res.failed.length + ' รายการ: ' + res.failed[0].error + ' — กรุณาบันทึกใหม่', 'bad');
+      }
+      else { const it = OB.mine()[0]; cur = [it]; await call(it.type === 'water' ? 'saveWater' : 'saveIncident', it.payload); OB.drop(it); }
+      OB.save(); OB.sending = false; obBar();
+      if (OB.mine().length) return OB.flush();
+      clearTimeout(ST.syncT); ST.syncT = setTimeout(() => loadGuard(true), 1200);
+    } catch (e) {
+      OB.sending = false;
+      if (e.server && cur && !/lock|timeout|service|ล็อก|หมดเวลา|SESSION/i.test(e.message)) {
+        cur.forEach(OB.drop); OB.save(); obBar(); renderGuard();          // ข้อมูลไม่ผ่านเงื่อนไข — ไม่ส่งซ้ำ ให้บันทึกใหม่
+        toast('บันทึกไม่สำเร็จ: ' + e.message + ' — กรุณาบันทึกใหม่', 'bad');
+        return OB.flush();
+      }
+      OB.err = e.message; obBar();
+      clearTimeout(OB.timer); OB.timer = setTimeout(() => OB.flush(), 15000);
+    }
+  }
+};
+function obBar() {
+  const el = $('#obBar'); if (!el) return;
+  const n = OB.mine().length;
+  if (!n) { el.className = 'ob hidden'; el.innerHTML = ''; return; }
+  el.className = 'ob' + (OB.err ? ' bad' : '');
+  el.innerHTML = OB.err
+    ? '<span>' + ic('alert') + ' ยังส่งไม่สำเร็จ ' + n + ' รายการ (เก็บไว้ในเครื่องแล้ว)</span><button class="btn sm line" onclick="OB.flush()">ลองส่งอีกครั้ง</button>'
+    : '<span><span class="dotspin"></span> กำลังส่ง ' + n + ' รายการ…</span>';
+}
+const pendRows = (t) => OB.mine().filter(i => i.type === t).map(i => Object.assign({ pending: 1 }, i.row));
+
+async function loadGuard(silent) {
+  try {
+    ST.home = await call('guardHome');
+    renderGuard();
+    if (window.DEEP_CP) { const id = window.DEEP_CP; window.DEEP_CP = ''; if (ST.home.checkpoints.some(c => c.cp_id === id)) openPatrol(id); }
+  } catch (e) { if (!silent) toast(e.message, 'bad'); }
+  clearInterval(ST.timer);
+  ST.timer = setInterval(() => { if ($('#modal').classList.contains('hidden') && !OB.mine().length) loadGuard(true); }, 60000);
+}
+function slotState(x, slot, idx) {
+  const req = x.checkpoints.filter(cp => idx % cp.every === 0);
+  const done = req.filter(cp => x._logs.some(l => l.slot === slot && l.cp_id === cp.cp_id && l.adhoc !== 'TRUE')).length;
+  const h = Number(slot.slice(0, 2)), cur = x.ctx.hour;
+  return { req: req.length, done, cls: h > cur ? 'fut' : h === cur ? 'cur' : done === req.length ? 'full' : done === 0 ? 'none' : 'part' };
+}
+/** จุดที่ยังไม่ได้ตรวจในรอบนี้ (เรียงตามลำดับเดินตรวจ) */
+function pendingCps() {
+  const x = ST.home, idx = x.slots.indexOf(x.ctx.slot);
+  return x.checkpoints.filter((cp, i) => idx % cp.every === 0 && !x._logs.some(l => l.slot === x.ctx.slot && l.cp_id === cp.cp_id && l.adhoc !== 'TRUE'));
+}
+function camBtn(cpId, cls, label) {
+  return '<label class="' + cls + '">' + label + '<input type="file" accept="image/*" capture="environment" onchange="quickShot(this,\'' + cpId + '\')"></label>';
+}
+function renderGuard() {
+  const x = ST.home, c = x.ctx, idx = x.slots.indexOf(c.slot);
+  x._logs = x.logs.concat(pendRows('patrol'));
+  x._incs = x.incidents.concat(pendRows('incident'));
+  x._water = (x.water || []).concat(pendRows('water'));
+  const wTanks = x._water.reduce((a, w) => a + (Number(w.tanks) || 0), 0);
+  const cur = slotState(x, c.slot, idx), pend = pendingCps();
+  const pct = cur.req ? Math.round(cur.done * 100 / cur.req) : 100;
+  const cards = x.checkpoints.map((cp, i) => {
+    const logs = x._logs.filter(l => l.slot === c.slot && l.cp_id === cp.cp_id && l.adhoc !== 'TRUE');
+    const need = idx % cp.every === 0;
+    let cls = 'todo', st = '<span class="pill pri">' + ic('cam') + ' แตะเพื่อถ่าย</span>';
+    if (logs.length) {
+      const last = logs[logs.length - 1], bad = logs.some(l => l.status === 'ผิดปกติ');
+      cls = bad ? 'bad' : 'done';
+      st = last.pending ? '<span class="pill"><span class="dotspin"></span> กำลังส่ง</span>'
+        : '<span class="pill ' + (bad ? 'bad' : 'ok') + '">' + (bad ? 'ผิดปกติ' : ic('check') + ' ตรวจแล้ว') + ' ' + hm(last.ts) + '</span>';
+    } else if (!need) {
+      cls = 'skip';
+      const nxt = x.slots.find((s, j) => j > idx && j % cp.every === 0);
+      st = '<span class="pill">ทุก ' + cp.every + ' ชม.' + (nxt ? ' · รอบ ' + nxt : '') + '</span>';
+    }
+    const inner = '<div class="num">' + (i + 1) + '</div><div><div class="n">' + esc(cp.name) + '</div><div class="z">' + esc(cp.zone || '') + '</div></div><div class="st">' + st + '</div>';
+    return camBtn(cp.id || cp.cp_id, 'cp ' + cls, inner);
+  }).join('') || '<div class="empty">ยังไม่มีจุดตรวจ — แจ้งผู้ดูแลระบบ</div>';
+  const slots = x.slots.map((s, i) => { const k = slotState(x, s, i); return '<div class="slot ' + k.cls + '"><b>' + s.slice(0, 2) + '</b>' + (k.cls === 'fut' ? '–' : k.done + '/' + k.req) + '</div>'; }).join('');
+  const feed = x._logs.map(l => ({
+    ts: l.ts, html: '<div class="dot ' + (l.status === 'ผิดปกติ' ? 'bad' : '') + '"></div><div style="flex:1"><div><b>' + esc(l.cp_name) + '</b>' + (l.adhoc === 'TRUE' ? ' <span class="pill">เพิ่มเติม</span>' : '') +
+      ' <span class="pill ' + (l.status === 'ผิดปกติ' ? 'bad' : 'ok') + '">' + l.status + '</span>' + (l.pending ? ' <span class="pill"><span class="dotspin"></span> กำลังส่ง</span>' : '') + '</div>' +
+      (l.detail ? '<div class="small">' + esc(l.detail) + '</div>' : '') + '<div class="muted small">' + esc(l.staff_name) + (l.photos && !l.pending ? ' · <button class="link small" onclick="openPhotos(\'' + l.photos + '\')">ดูรูป</button>' : '') + '</div></div>'
+  })).concat(x._incs.map(r => ({
+    ts: r.ts, html: '<div class="dot inc"></div><div style="flex:1"><div><b>' + esc(r.category) + '</b> <span class="pill warn">' + esc(r.severity) + '</span>' + (r.pending ? ' <span class="pill"><span class="dotspin"></span> กำลังส่ง</span>' : '') + '</div>' +
+      '<div class="small">' + esc(r.location) + ' — ' + esc(r.detail) + '</div><div class="muted small">' + esc(r.staff_name) + (r.photos && !r.pending ? ' · <button class="link small" onclick="openPhotos(\'' + r.photos + '\')">ดูรูป</button>' : '') + '</div></div>'
+  }))).concat(x._water.map(w => ({
+    ts: w.ts, html: '<div class="dot water"></div><div style="flex:1"><div><b>เติมน้ำ ' + esc(w.location) + '</b> <span class="pill water">' + esc(w.tanks) + ' ถัง</span>' + (w.pending ? ' <span class="pill"><span class="dotspin"></span> กำลังส่ง</span>' : '') + '</div>' +
+      '<div class="muted small">' + esc(w.staff_name) + '</div></div>'
+  }))).sort((a, b) => b.ts.localeCompare(a.ts)).filter((f, i) => ST.feedAll || i < 10).map(f => '<div class="fi"><div class="tm">' + hm(f.ts) + '</div>' + f.html + '</div>').join('') || '<div class="empty">ยังไม่มีบันทึกในเวรนี้</div>';
+  const ended = x.myDuty && x.myDuty.end_ts;
+  const nextLbl = pend.length
+    ? '<div class="nx"><span class="nx-l">ถ่ายรูปจุดถัดไป</span><span class="nx-n">' + ic('cam') + esc(pend[0].name) + '</span><span class="nx-s">เหลืออีก ' + pend.length + ' จุดในรอบนี้</span></div>'
+    : '';
+  $('#app').innerHTML = topbar(x.shiftName + ' ' + x.label) + '<div id="obBar" class="ob hidden"></div><main class="wrap">' +
+    '<section class="hero"><div class="row sb"><span class="badge">' + x.shiftName + '</span><span class="hs">' + thD(c.date) + '</span></div>' +
+    '<div class="clock" id="clock">--:--</div><div class="hs">รอบตรวจ ' + c.slot + '–' + c.slot.slice(0, 2) + ':59 น. · เหลือ <b id="left">' + (60 - c.minute) + '</b> นาที</div>' +
+    '<div class="prog"><i style="width:' + pct + '%"></i></div><div class="row sb hs"><span>รอบนี้ตรวจแล้ว <b>' + cur.done + '/' + cur.req + '</b> จุด</span><span>ทั้งเวร ' + (x.coverage == null ? '–' : x.coverage + '%') + '</span></div></section>' +
+    (pend.length ? camBtn(pend[0].cp_id, 'nxbtn', nextLbl) : '<div class="done-all">' + ic('check') + ' ตรวจครบทุกจุดในรอบ ' + c.slot + ' น. แล้ว</div>') +
+    '<div class="act2"><button class="btn warn" onclick="openIncident()">' + ic('alert') + 'แจ้งเหตุการณ์</button><button class="btn soft" onclick="openPatrol(\'\')">' + ic('plus') + 'จุดตรวจเพิ่มเติม</button></div>' +
+    '<button class="btn water block" onclick="openWater()">' + ic('drop') + 'บันทึกเติมน้ำ' + (x._water.length ? ' <span class="pill water" style="background:#fff">เวรนี้ ' + x._water.length + ' ครั้ง · ' + wTanks + ' ถัง</span>' : '') + '</button>' +
+    '<h3 class="sec"><span>จุดตรวจรอบ ' + c.slot + ' น.</span><button class="link small" onclick="loadGuard()">' + ic('refresh') + '</button></h3><div class="cp-list">' + cards + '</div>' +
+    '<h3 class="sec"><span>ความคืบหน้าทั้งเวร</span><span class="muted small">ตรวจแล้ว/ต้องตรวจ</span></h3><div class="slots">' + slots + '</div>' +
+    '<h3 class="sec"><span>บันทึกในเวรนี้ (' + (x._logs.length + x._incs.length + x._water.length) + ')</span>' + ((x._logs.length + x._incs.length + x._water.length) > 10 ? '<button class="link small" onclick="ST.feedAll=!ST.feedAll;renderGuard()">' + (ST.feedAll ? 'แสดงเฉพาะล่าสุด' : 'ดูทั้งหมด') + '</button>' : '') + '</h3><div class="feed">' + feed + '</div>' +
+    '<div class="act2" style="margin-top:20px"><button class="btn line" onclick="previewReport({kind:\'shift\',date:\'' + x.date + '\',shift:\'' + x.shift + '\'})">' + ic('file') + 'รายงานเวรนี้</button>' +
+    '<button class="btn pri" onclick="openHandover()">' + ic('check') + (ended ? 'แก้ไขบันทึกส่งเวร' : 'ลงชื่อส่งเวร') + '</button></div>' +
+    '<button class="btn soft block" onclick="previewReport({kind:\'person\'})">' + ic('file') + 'รายงานการปฏิบัติงานของฉัน (7 วัน)</button></main>';
+  obBar(); tick(); clearInterval(ST.clock); ST.clock = setInterval(tick, 1000);
+}
+function tick() {
+  const el = $('#clock'); if (!el) return;
+  const d = new Date(Date.now() + (7 * 60 + new Date().getTimezoneOffset()) * 60000);
+  el.textContent = p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds());
+  const l = $('#left'); if (l) l.textContent = 60 - d.getMinutes();
+  if (ST.home && p2(d.getHours()) + ':00' !== ST.home.ctx.slot && !ST.reloading && Date.now() - (ST.lastReload || 0) > 30000) {
+    ST.reloading = true; ST.lastReload = Date.now(); loadGuard(true).then(() => ST.reloading = false);
+  }
+}
+function nowTs() { const d = new Date(Date.now() + (7 * 60 + new Date().getTimezoneOffset()) * 60000); return d.toISOString().slice(0, 10) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds()); }
+
+/* ---- รูปภาพ ---- */
+function compressImage(file, label) {
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 900, s = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas'); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);
+      const g = cv.getContext('2d'); g.drawImage(img, 0, 0, cv.width, cv.height);
+      const d = new Date(), fs = Math.max(14, Math.round(cv.width / 34));
+      const text = d.getDate() + '/' + (d.getMonth() + 1) + '/' + (d.getFullYear() + 543) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()) + ' · ' + label;
+      g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, cv.height - fs * 1.8, cv.width, fs * 1.8);
+      g.fillStyle = '#fff'; g.font = '600 ' + fs + 'px Sarabun, sans-serif'; g.fillText(text, fs * .6, cv.height - fs * .6);
+      URL.revokeObjectURL(url); resolve(cv.toDataURL('image/jpeg', 0.62));
+    };
+    img.onerror = () => reject(new Error('อ่านไฟล์รูปไม่ได้')); img.src = url;
+  });
+}
+function photoBox() {
+  const f = ST.form, max = ST.info.maxPhotos;
+  $('#fPhotos').innerHTML = f.photos.map((p, i) => '<div class="ph"><img src="' + p + '"><button onclick="ST.form.photos.splice(' + i + ',1);photoBox()">×</button></div>').join('') +
+    (f.photos.length < max ? '<label class="ph-add">' + ic('cam') + 'ถ่ายรูป<br>(' + f.photos.length + '/' + max + ')<input type="file" accept="image/*" capture="environment" onchange="addPhoto(this)"></label>' : '');
+}
+async function addPhoto(input) {
+  const file = input.files && input.files[0]; input.value = ''; if (!file) return;
+  try { ST.form.photos.push(await compressImage(file, ST.form.label || 'SecureRound')); photoBox(); } catch (e) { toast(e.message, 'bad'); }
+}
+async function openPhotos(ids) {
+  const list = String(ids).split(',').filter(Boolean);
+  openModal('ภาพถ่าย (' + list.length + ')', '<div class="gallery" id="gal"><div class="spin"></div></div>');
+  const out = [];
+  for (const id of list) { try { out.push('<img src="' + await call('getPhoto', { id }) + '">'); } catch (e) { out.push('<div class="empty">โหลดรูปไม่ได้</div>'); } }
+  if ($('#gal')) $('#gal').innerHTML = out.join('');
+}
+
+/* ---- โหมดส่งไว: ถ่าย → ยืนยัน 1 ปุ่ม ---- */
+async function quickShot(input, cpId) {
+  const file = input.files && input.files[0]; input.value = ''; if (!file) return;
+  const cp = ST.home.checkpoints.find(c => c.cp_id === cpId);
+  openModal(cp ? cp.name : 'จุดตรวจ', '<div class="spin"></div>');
+  try {
+    const photo = await compressImage(file, cp ? cp.name : 'จุดตรวจ');
+    ST.form = { cp_id: cpId, status: 'ปกติ', photos: [photo], label: cp ? cp.name : 'จุดตรวจ', slot: ST.home.ctx.slot };
+    confirmSheet();
+  } catch (e) { closeModal(); toast(e.message, 'bad'); }
+}
+function confirmSheet() {
+  const f = ST.form, cp = ST.home.checkpoints.find(c => c.cp_id === f.cp_id);
+  $('#mTitle').textContent = cp ? cp.name : 'จุดตรวจ';
+  $('#mBody').innerHTML =
+    '<div class="qshot"><img src="' + f.photos[0] + '"><div><div class="muted small">' + esc((cp && cp.zone) || '') + ' · รอบ ' + f.slot + ' น. · ' + hm(nowTs()) + '</div>' +
+    (cp && cp.note ? '<div class="small">ตรวจ: ' + esc(cp.note) + '</div>' : '') + '<label class="link ph-add-sm">' + ic('cam') + ' เพิ่มรูป<input type="file" accept="image/*" capture="environment" onchange="addQuickPhoto(this)"></label></div></div>' +
+    (f.photos.length > 1 ? '<div class="muted small">แนบแล้ว ' + f.photos.length + ' รูป</div>' : '') +
+    '<button class="btn ok block big" onclick="quickSave(this,\'ปกติ\')">' + ic('check') + 'ปกติ — บันทึกเลย</button>' +
+    '<button class="btn line block" style="margin-top:10px;border-color:#f3c1bd;color:var(--bad)" onclick="badForm()">' + ic('alert') + 'พบสิ่งผิดปกติ</button>';
+}
+async function addQuickPhoto(input) {
+  const file = input.files && input.files[0]; input.value = ''; if (!file) return;
+  if (ST.form.photos.length >= ST.info.maxPhotos) return toast('แนบรูปได้สูงสุด ' + ST.info.maxPhotos + ' รูป', 'bad');
+  try { ST.form.photos.push(await compressImage(file, ST.form.label)); ST.form.bad ? badForm() : confirmSheet(); } catch (e) { toast(e.message, 'bad'); }
+}
+function badForm() {
+  const f = ST.form; f.bad = 1; f.status = 'ผิดปกติ';
+  $('#mBody').innerHTML = '<div class="qshot"><img src="' + f.photos[0] + '"><div><div class="pill bad">พบสิ่งผิดปกติ</div>' +
+    '<label class="link ph-add-sm">' + ic('cam') + ' เพิ่มรูป<input type="file" accept="image/*" capture="environment" onchange="addQuickPhoto(this)"></label></div></div>' +
+    '<label class="f">แตะเลือกสิ่งที่พบ (เลือกได้หลายข้อ)</label><div class="chips">' + ST.info.quickReasons.map(r => '<button class="chipb" onclick="addText(\'qDetail\',this)">' + esc(r) + '</button>').join('') + '</div>' +
+    '<textarea class="in" id="qDetail" rows="3" style="margin-top:8px" placeholder="พิมพ์เพิ่มได้ เช่น ตำแหน่ง/ความเสียหาย">' + esc(f.detail || '') + '</textarea>' +
+    '<label class="f">การดำเนินการ</label><div class="chips">' + ST.info.quickActions.map(r => '<button class="chipb" onclick="addText(\'qDetail\',this)">' + esc(r) + '</button>').join('') + '</div>' +
+    '<div class="act2" style="margin-top:16px"><button class="btn line" onclick="ST.form.bad=0;ST.form.status=\'ปกติ\';confirmSheet()">ย้อนกลับ</button>' +
+    '<button class="btn warn" onclick="quickSave(this,\'ผิดปกติ\')">' + ic('check') + 'ส่งรายงาน</button></div>';
+}
+function addText(id, btn) {
+  const el = $('#' + id), t = btn.textContent, v = el.value.trim();
+  if (v.indexOf(t) >= 0) return;
+  el.value = (v ? v.replace(/[\s·]+$/, '') + ' · ' : '') + t;
+  btn.classList.add('on');
+  if (id === 'qDetail' && ST.form) ST.form.detail = el.value;
+}
+function quickSave(btn, status) {
+  const f = ST.form, cp = ST.home.checkpoints.find(c => c.cp_id === f.cp_id);
+  const detail = $('#qDetail') ? $('#qDetail').value.trim() : '';
+  if (status === 'ผิดปกติ' && detail.length < 3) return toast('กรุณาระบุสิ่งที่พบ (แตะข้อความสำเร็จรูปได้)', 'bad');
+  queuePatrol({ cp_id: f.cp_id, adhoc_name: '', status, detail, photos: f.photos, ts: nowTs(), slot: f.slot },
+    { cp_id: f.cp_id, cp_name: cp ? cp.name : f.label, adhoc: 'FALSE', slot: f.slot, ts: nowTs(), status, detail, staff_name: ST.user.name, photos: '' });
+  const pend = pendingCps();
+  if (pend.length) {
+    $('#mTitle').textContent = 'บันทึกแล้ว ✓';
+    $('#mBody').innerHTML = '<div class="saved">' + ic('check') + ' บันทึก “' + esc(cp ? cp.name : f.label) + '” แล้ว ระบบกำลังส่งให้เอง</div>' +
+      camBtn(pend[0].cp_id, 'nxbtn', '<div class="nx"><span class="nx-l">ถ่ายรูปจุดถัดไป</span><span class="nx-n">' + ic('cam') + esc(pend[0].name) + '</span><span class="nx-s">เหลืออีก ' + pend.length + ' จุด</span></div>') +
+      '<button class="btn line block" style="margin-top:10px" onclick="closeModal()">ปิด</button>';
+  } else { closeModal(); toast('บันทึกแล้ว — ตรวจครบรอบนี้', 'ok'); }
+}
+function queuePatrol(payload, row) {
+  OB.add({ type: 'patrol', payload, row });
+  renderGuard();
+}
+
+/* ---- ฟอร์มเต็ม (จุดเพิ่มเติม / แก้ไขรายละเอียด) ---- */
+function openPatrol(cpId) {
+  const x = ST.home, cp = x.checkpoints.find(c => c.cp_id === cpId);
+  ST.form = { cp_id: cp ? cp.cp_id : '', status: 'ปกติ', photos: [], label: cp ? cp.name : 'จุดตรวจเพิ่มเติม', slot: x.ctx.slot };
+  openModal(cp ? cp.name : 'จุดตรวจเพิ่มเติม',
+    (cp ? '<div class="muted" style="margin-top:8px">' + ic('pin') + ' ' + esc(cp.zone || '') + ' · รอบ ' + x.ctx.slot + ' น.' + (cp.note ? '<br>' + esc(cp.note) : '') + '</div>'
+      : '<label class="f">ชื่อจุด / สถานที่ <span class="req">*</span></label><input class="in" id="fAdhoc" placeholder="เช่น หลังโรงครัว, ประตูข้างอาคาร" oninput="ST.form.label=this.value">') +
+    '<label class="f">ภาพถ่าย ' + (ST.info.requirePhoto ? '<span class="req">*</span>' : '') + '</label><div class="photos" id="fPhotos"></div>' +
+    '<label class="f">ผลการตรวจ</label><div class="seg2"><button id="stOk" class="on ok" onclick="setStatus(\'ปกติ\')">✓ ปกติ</button><button id="stBad" class="bad" onclick="setStatus(\'ผิดปกติ\')">! ผิดปกติ</button></div>' +
+    '<div id="fReasons" class="hidden"><label class="f">แตะเลือกสิ่งที่พบ</label><div class="chips">' + ST.info.quickReasons.map(r => '<button class="chipb" onclick="addText(\'fDetail\',this)">' + esc(r) + '</button>').join('') + '</div></div>' +
+    '<label class="f" id="fDetailLbl">หมายเหตุ (ถ้ามี)</label><textarea class="in" id="fDetail" rows="3" placeholder="บันทึกเพิ่มเติม"></textarea>' +
+    '<button class="btn pri block big" style="margin-top:18px" onclick="submitPatrol(this)">' + ic('check') + 'บันทึกจุดตรวจ</button>');
+  photoBox();
+}
+function setStatus(s) {
+  ST.form.status = s;
+  $('#stOk').className = s === 'ปกติ' ? 'on ok' : 'ok'; $('#stBad').className = s === 'ผิดปกติ' ? 'on bad' : 'bad';
+  $('#fReasons').className = s === 'ผิดปกติ' ? '' : 'hidden';
+  $('#fDetailLbl').innerHTML = s === 'ผิดปกติ' ? 'รายงานสถานการณ์ <span class="req">*</span>' : 'หมายเหตุ (ถ้ามี)';
+}
+function submitPatrol(btn) {
+  const f = ST.form, detail = $('#fDetail').value.trim(), name = f.cp_id ? f.label : ($('#fAdhoc') ? $('#fAdhoc').value.trim() : '');
+  if (!f.cp_id && !name) return toast('กรุณาระบุชื่อจุดตรวจ', 'bad');
+  if (ST.info.requirePhoto && !f.photos.length) return toast('กรุณาถ่ายรูปอย่างน้อย 1 รูป', 'bad');
+  if (f.status === 'ผิดปกติ' && detail.length < 3) return toast('กรุณารายงานสถานการณ์ที่ผิดปกติ', 'bad');
+  queuePatrol({ cp_id: f.cp_id, adhoc_name: f.cp_id ? '' : name, status: f.status, detail, photos: f.photos, ts: nowTs(), slot: f.slot },
+    { cp_id: f.cp_id, cp_name: name, adhoc: f.cp_id ? 'FALSE' : 'TRUE', slot: f.slot, ts: nowTs(), status: f.status, detail, staff_name: ST.user.name, photos: '' });
+  closeModal(); toast('บันทึกแล้ว — ระบบกำลังส่งให้เอง', 'ok');
+}
+function openIncident() {
+  const I = ST.info;
+  ST.form = { category: '', severity: 'ปานกลาง', photos: [], label: 'แจ้งเหตุการณ์' };
+  openModal('แจ้งเหตุการณ์เพิ่มเติม',
+    '<label class="f">ประเภทเหตุการณ์ <span class="req">*</span></label><div class="chips" id="cats">' + I.categories.map(c => '<button class="chipb" onclick="pickChip(\'cats\',this,\'category\')">' + esc(c) + '</button>').join('') + '</div>' +
+    '<label class="f">ระดับความรุนแรง</label><div class="seg" id="sev">' + I.severities.map(s => '<button class="' + (s === 'ปานกลาง' ? 'on' : '') + '" onclick="pickSeg(this)">' + s + '</button>').join('') + '</div>' +
+    '<label class="f">สถานที่ <span class="req">*</span></label><div class="chips">' + ST.home.checkpoints.slice(0, 6).map(c => '<button class="chipb" onclick="setVal(\'iLoc\',this)">' + esc(c.name) + '</button>').join('') + '</div>' +
+    '<input class="in" id="iLoc" style="margin-top:8px" placeholder="หรือพิมพ์สถานที่อื่น">' +
+    '<label class="f">รายละเอียดเหตุการณ์ <span class="req">*</span></label><textarea class="in" id="iDetail" rows="3" placeholder="เกิดอะไรขึ้น ผู้เกี่ยวข้อง ความเสียหาย"></textarea>' +
+    '<label class="f">การดำเนินการ / ผู้ที่แจ้งแล้ว</label><div class="chips">' + I.quickActions.map(r => '<button class="chipb" onclick="addText(\'iAction\',this)">' + esc(r) + '</button>').join('') + '</div>' +
+    '<textarea class="in" id="iAction" rows="2" style="margin-top:8px" placeholder="เช่น แจ้งหัวหน้าเวร ประสานตำรวจ"></textarea>' +
+    '<label class="f">ภาพถ่าย</label><div class="photos" id="fPhotos"></div>' +
+    '<button class="btn warn block big" style="margin-top:18px" onclick="submitIncident(this)">' + ic('alert') + 'ส่งรายงานเหตุการณ์</button>');
+  photoBox();
+}
+function pickChip(group, el, key) { document.querySelectorAll('#' + group + ' .chipb').forEach(b => b.classList.remove('on')); el.classList.add('on'); ST.form[key] = el.textContent; ST.form.label = el.textContent; }
+function pickSeg(el) { el.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('on')); el.classList.add('on'); ST.form.severity = el.textContent; }
+function setVal(id, btn) { $('#' + id).value = btn.textContent; btn.parentNode.querySelectorAll('.chipb').forEach(b => b.classList.remove('on')); btn.classList.add('on'); }
+function submitIncident(btn) {
+  const f = ST.form;
+  const p = { category: f.category, severity: f.severity, location: $('#iLoc').value.trim(), detail: $('#iDetail').value.trim(), action: $('#iAction').value.trim(), photos: f.photos, ts: nowTs() };
+  if (!p.category) return toast('กรุณาเลือกประเภทเหตุการณ์', 'bad');
+  if (!p.location || p.detail.length < 3) return toast('กรุณาระบุสถานที่และรายละเอียด', 'bad');
+  OB.add({ type: 'incident', payload: p, row: Object.assign({}, p, { staff_name: ST.user.name, photos: '' }) });
+  closeModal(); renderGuard(); toast('ส่งรายงานเหตุการณ์แล้ว', 'ok');
+}
+/* ---- บันทึกเติมน้ำ ---- */
+function openWater() {
+  const places = (ST.home.waterPlaces || []);
+  ST.form = { photos: [], label: 'เติมน้ำ' };
+  openModal('บันทึกเติมน้ำ',
+    '<label class="f">จุดบริการที่เติม <span class="req">*</span></label>' +
+    (places.length ? '<div class="chips">' + places.map(n => '<button class="chipb" onclick="setVal(\'wLoc\',this)">' + esc(n) + '</button>').join('') + '</div>' : '') +
+    '<input class="in" id="wLoc" style="margin-top:8px" placeholder="' + (places.length ? 'หรือพิมพ์จุดอื่น' : 'เช่น ตู้กดน้ำ OPD ชั้น 1') + '">' +
+    '<label class="f">จำนวนถัง <span class="req">*</span></label><div class="stepper"><button onclick="wStep(-1)">−</button><input class="in" id="wTanks" type="number" inputmode="numeric" min="1" max="50" value="1"><button onclick="wStep(1)">+</button><span class="muted">ถัง</span></div>' +
+    '<button class="btn water block big" style="margin-top:18px" onclick="submitWater(this)">' + ic('check') + 'บันทึกเติมน้ำ</button>');
+}
+function wStep(d) { const el = $('#wTanks'); el.value = Math.min(50, Math.max(1, (parseInt(el.value, 10) || 0) + d)); }
+function submitWater(btn) {
+  const loc = $('#wLoc').value.trim(), tanks = parseInt($('#wTanks').value, 10);
+  if (!loc) return toast('กรุณาระบุจุดที่เติมน้ำ', 'bad');
+  if (!(tanks >= 1 && tanks <= 50)) return toast('จำนวนถังต้องเป็น 1–50', 'bad');
+  const p = { location: loc, tanks, ts: nowTs() };
+  OB.add({ type: 'water', payload: p, row: Object.assign({}, p, { staff_name: ST.user.name, photos: '' }) });
+  closeModal(); renderGuard(); toast('บันทึกเติมน้ำ ' + tanks + ' ถังแล้ว', 'ok');
+}
+function openHandover() {
+  const x = ST.home, mine = x.myDuty || {};
+  openModal('ลงชื่อส่งเวร',
+    '<div class="card" style="margin-top:10px;background:var(--pri-50);border:0"><div class="b">' + x.shiftName + ' ' + x.label + ' · ' + thD(x.date) + '</div>' +
+    '<div class="small">ความครอบคลุมจุดตรวจ ' + (x.coverage == null ? '–' : x.coverage + '%') + ' (' + x.hit + '/' + x.expected + ') · ผิดปกติ ' + x.abnormal + ' · เหตุการณ์ ' + x.incidentCount + '</div>' +
+    (x.missed.length ? '<div class="small" style="color:var(--bad);margin-top:4px">จุดที่ขาดตรวจ: ' + x.missed.slice(0, 6).map(m => m.slot.slice(0, 2) + '.00 ' + esc(m.cp_name)).join(', ') + (x.missed.length > 6 ? ' …' : '') + '</div>' : '') + '</div>' +
+    '<label class="f">บันทึกส่งเวร / สิ่งที่ต้องติดตามต่อ</label>' +
+    '<div class="chips">' + ['ไม่มีเหตุการณ์ผิดปกติ', 'ส่งเวรเรียบร้อย', 'มีเรื่องต้องติดตามต่อ'].map(t => '<button class="chipb" onclick="addText(\'hNote\',this)">' + t + '</button>').join('') + '</div>' +
+    '<textarea class="in" id="hNote" rows="4" style="margin-top:8px" placeholder="เช่น ไฟส่องสว่างลานจอดรถดวงที่ 3 ดับ แจ้งช่างแล้ว">' + esc(mine.handover || '') + '</textarea>' +
+    '<button class="btn pri block big" style="margin-top:16px" onclick="submitHandover(this)">' + ic('check') + 'ยืนยันส่งเวร</button>');
+}
+async function submitHandover(btn) {
+  await busy(btn, async () => { ST.home = await call('endDuty', { handover: $('#hNote').value }); closeModal(); renderGuard(); toast('บันทึกส่งเวรแล้ว', 'ok'); });
+}
+
+/* ================= reports ================= */
+async function previewReport(params) {
+  openModal('กำลังสร้างรายงาน…', '<div class="spin"></div><div class="muted" style="text-align:center">กำลังรวบรวมข้อมูลและภาพถ่าย</div>', true);
+  try {
+    const r = await call('report', params);
+    ST.lastReport = params;
+    $('#mTitle').textContent = r.title;
+    $('#mBody').innerHTML = '<div class="row"><button class="btn pri" onclick="printReport()">' + ic('file') + 'พิมพ์ / บันทึกเป็น PDF</button>' +
+      '<button class="btn line" onclick="downloadPdf(this)">ดาวน์โหลดไฟล์ PDF (เก็บใน Drive)</button></div><iframe class="rep" id="repFrame"></iframe>';
+    $('#repFrame').srcdoc = r.html;
+  } catch (e) { $('#mTitle').textContent = 'สร้างรายงานไม่สำเร็จ'; $('#mBody').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+function printReport() { const f = $('#repFrame'); f.contentWindow.focus(); f.contentWindow.print(); }
+async function downloadPdf(btn) {
+  const t = btn.innerHTML; btn.disabled = true; btn.innerHTML = 'กำลังสร้าง PDF…';
+  try {
+    const r = await call('makePdf', ST.lastReport);
+    const bin = atob(r.base64), arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([arr], { type: 'application/pdf' })); a.download = r.filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('ดาวน์โหลดแล้ว และบันทึกสำเนาไว้ใน Google Drive', 'ok');
+  } catch (e) { toast(e.message, 'bad'); } finally { btn.disabled = false; btn.innerHTML = t; }
+}
+
+/* ================= admin / executive ================= */
+function adminTabs() {
+  const t = [['dash', 'ภาพรวม'], ['abn', 'เหตุผิดปกติ'], ['rep', 'รายงาน']];
+  if (ST.user.role === 'admin') t.push(['staff', 'เจ้าหน้าที่'], ['dev', 'เครื่องที่อนุมัติ'], ['cp', 'จุดตรวจ'], ['water', 'จุดเติมน้ำ'], ['notify', 'แจ้งเตือน'], ['users', 'ผู้ใช้ระบบ']);
+  return t;
+}
+function adminView() {
+  const tabs = adminTabs();
+  if (!tabs.some(t => t[0] === ST.tab)) ST.tab = 'dash';
+  $('#app').innerHTML = topbar(ST.user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้บริหาร') +
+    '<nav class="tabs">' + tabs.map(t => '<button id="tab_' + t[0] + '" onclick="showTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('') + '</nav><main class="wrap wide" id="pane"></main>';
+  showTab(ST.tab);
+}
+function showTab(t) {
+  ST.tab = t;
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.id === 'tab_' + t));
+  $('#pane').innerHTML = '<div class="spin"></div>';
+  ({ dash: tabDash, abn: tabAbn, rep: tabRep, staff: tabStaff, dev: tabDev, cp: tabCp, water: tabWater, notify: tabNotify, users: tabUsers })[t]().catch(e => { $('#pane').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; });
+}
+const STATE_TXT = { done: ['เสร็จสิ้น', ''], current: ['กำลังปฏิบัติ', 'pri'], future: ['ยังไม่ถึงเวร', ''] };
+const tone = (v) => v == null ? '' : v >= 90 ? 'ok' : v >= 70 ? 'warn' : 'bad';
+
+async function tabDash() {
+  const d = await call('dashboard', { date: ST.dashDate, days: 7 });
+  const k = d.kpi, maxT = 100;
+  const kpi = (l, v, sub, cls, click) => '<div class="card kpi ' + cls + (click ? ' click" onclick="' + click : '') + '"><div class="l">' + l + '</div><div class="v">' + v + '</div><div class="d">' + sub + '</div></div>';
+  const shiftCards = d.shifts.map(s => {
+    const stt = STATE_TXT[s.state];
+    return '<div class="card shiftc"><div class="row sb"><b style="font-size:17px">' + s.shiftName + '</b><span class="pill ' + stt[1] + '">' + stt[0] + '</span></div><div class="muted small">' + s.label + '</div>' +
+      '<div class="cov"><div class="bar ' + tone(s.coverage) + '"><i style="width:' + (s.coverage || 0) + '%"></i></div><b>' + (s.coverage == null ? '–' : s.coverage + '%') + '</b></div>' +
+      '<div class="small muted">ตรวจ ' + s.hit + '/' + s.expected + ' รอบ-จุด · <span style="color:var(--bad)">ผิดปกติ ' + s.abnormal + '</span> · เหตุการณ์ ' + s.incidents + ' · จุดเพิ่ม ' + s.adhoc + (s.water ? ' · <span style="color:#0e7490">เติมน้ำ ' + s.water + ' ครั้ง/' + s.waterTanks + ' ถัง</span>' : '') + '</div>' +
+      '<div class="chips" style="margin:8px 0">' + (s.guards.map(g => '<span class="pill pri">' + esc(g.name) + '</span>').join('') || '<span class="muted small">ยังไม่มีผู้ลงเวร</span>') + '</div>' +
+      (s.state !== 'future' ? '<button class="btn line sm" onclick="previewReport({kind:\'shift\',date:\'' + d.date + '\',shift:\'' + s.shift + '\'})">' + ic('file') + 'รายงานเวร</button>' : '') + '</div>';
+  }).join('');
+  const trend = d.trend.map(t => '<div class="tcol"><div class="te">' + ((t.abnormal + t.incidents) ? '⚑' + (t.abnormal + t.incidents) : '') + '</div><div class="tv">' + (t.coverage == null ? '' : t.coverage + '%') + '</div>' +
+    '<div class="tb" style="height:' + Math.max(2, (t.coverage || 0) / maxT * 110) + 'px;' + (t.date === d.date ? '' : 'opacity:.55') + '"></div><div class="tl">' + thD(t.date, true) + '</div></div>').join('');
+  const maxP = Math.max(1, ...d.topPlaces.map(p => p.n));
+  const places = d.topPlaces.map(p => '<div class="hb"><span>' + esc(p.name) + '</span><div class="bar"><i style="width:' + (p.n / maxP * 100) + '%"></i></div><b>' + p.n + '</b></div>').join('') || '<div class="empty">ไม่พบสิ่งผิดปกติ</div>';
+  const isAdm = ST.user.role === 'admin';
+  ST.adhoc = d.adhoc || [];
+  const adhoc = ST.adhoc.map((a, i) => '<div class="wl"><div class="nm"><b>' + esc(a.name) + '</b> ' + (a.isCheckpoint ? '<span class="pill ok">เป็นจุดตรวจแล้ว</span>' : '') + (a.abnormal ? '<span class="pill bad">ผิดปกติ ' + a.abnormal + '</span>' : '') +
+    '<div class="muted small">' + a.n + ' ครั้ง · ' + a.days + ' วัน · ' + esc(a.staff.join(', ')) + ' · ล่าสุด ' + thD(String(a.last).slice(0, 10), true) + ' ' + hm(a.last) + '</div>' + (a.lastDetail ? '<div class="small">' + esc(a.lastDetail) + '</div>' : '') + '</div>' +
+    (isAdm && !a.isCheckpoint ? '<button class="btn soft sm" onclick="promoteCp(' + i + ')">' + ic('plus') + 'ตั้งเป็นจุดตรวจ</button>' : '') + '</div>').join('') || '<div class="empty">ยังไม่มีการรายงานจุดตรวจเพิ่มเติม</div>';
+  const W = d.water || { places: [], times: 0, tanks: 0 }, maxW = Math.max(1, ...W.places.map(p => p.tanks));
+  ST.wPlaces = W.places;
+  const water = W.places.map((p, i) => '<div class="hb"><span title="เช้า ' + p.byShift.M + ' · บ่าย ' + p.byShift.E + ' · ดึก ' + p.byShift.N + ' ถัง">' + esc(p.name) +
+    (isAdm && !p.inList ? ' <button class="link small" title="เพิ่มเป็นจุดเติมน้ำให้ รปภ.เลือก" onclick="promoteWp(' + i + ')">+ เพิ่มเป็นจุดเติมน้ำ</button>' : '') + '</span><div class="bar"><i style="width:' + (p.tanks / maxW * 100) + '%;background:#0891b2"></i></div><b>' + p.tanks + '</b></div>').join('') || '<div class="empty">ยังไม่มีบันทึกเติมน้ำ</div>';
+  const recent = d.recent.map(itemMini).join('') || '<div class="empty">ไม่มีรายการผิดปกติในช่วงนี้</div>';
+  $('#pane').innerHTML =
+    '<div class="pane-hd"><h2>ภาพรวมเวรรักษาความปลอดภัย</h2><div class="row"><input type="date" class="in" style="width:auto" value="' + d.date + '" onchange="ST.dashDate=this.value;showTab(\'dash\')">' +
+    '<button class="btn pri" onclick="previewReport({kind:\'abnormal\',from:\'' + d.from + '\',to:\'' + d.date + '\'})">' + ic('file') + 'รายงานผิดปกติ 7 วัน</button></div></div>' +
+    (d.pendingDevices ? '<div class="card" style="background:var(--warn-50);border-color:#f0d19f;margin-bottom:10px;cursor:pointer" onclick="showTab(\'dev\')"><b style="color:var(--warn)">' + ic('alert') + ' มีเครื่องรออนุมัติ ' + d.pendingDevices + ' เครื่อง</b> <span class="muted small">— แตะเพื่อตรวจสอบรหัสเครื่องกับ รปภ. แล้วกดอนุมัติ</span></div>' : '') +
+    '<div class="kpis">' + kpi('ความครอบคลุมจุดตรวจ', k.coverage == null ? '–' : k.coverage + '%', thD(d.date) + ' (รอบที่ผ่านแล้ว)', tone(k.coverage)) +
+    kpi('พบสิ่งผิดปกติ', k.abnormal, 'จากการตรวจจุดวันนี้', k.abnormal ? 'bad' : 'ok') + kpi('เหตุการณ์แจ้งเพิ่ม', k.incidents, 'ผู้ลงเวร ' + k.guards + ' คน', k.incidents ? 'warn' : 'ok') +
+    kpi('รอติดตาม / ยังไม่ปิด', k.openFollow, 'แตะเพื่อดูรายการ →', k.openFollow ? 'bad' : 'ok', "ST.abnF=null;showTab('abn')") + '</div>' +
+    '<div class="g3">' + shiftCards + '</div>' +
+    '<div class="g2"><div class="card"><h3>ความครอบคลุมจุดตรวจ 7 วัน <span class="muted small">(⚑ = จำนวนผิดปกติ+เหตุการณ์)</span></h3><div class="trend">' + trend + '</div></div>' +
+    '<div class="card"><h3>จุด/สถานที่ที่พบปัญหาบ่อย (7 วัน)</h3>' + places + '</div></div>' +
+    '<div class="g2"><div class="card"><h3>จุดตรวจเพิ่มเติมที่ รปภ.รายงาน (30 วัน) <span class="muted small">ทั้งปกติและผิดปกติ — ใช้พิจารณาเพิ่มจุดตรวจประจำ</span></h3>' + adhoc + '</div>' +
+    '<div class="card"><h3>การเติมน้ำ (30 วัน) <span class="muted small">รวม ' + W.times + ' ครั้ง · ' + W.tanks + ' ถัง · วันนี้ ' + (k.waterTanks || 0) + ' ถัง</span></h3>' + water + '</div></div>' +
+    '<div class="card" style="margin-top:10px"><div class="row sb"><h3>รายการผิดปกติล่าสุด</h3><button class="link" onclick="showTab(\'abn\')">ดูทั้งหมด →</button></div>' + recent + '</div>';
+}
+function itemMini(x) {
+  return '<div class="fi"><div class="dot ' + (x.type === 'incident' ? 'inc' : 'bad') + '"></div><div style="flex:1"><div class="row"><b>' + esc(x.title) + '</b>' + (x.severity ? '<span class="pill warn">' + esc(x.severity) + '</span>' : '') +
+    '<span class="pill ' + (x.follow_status === 'แก้ไขแล้ว' ? 'ok' : 'bad') + '">' + esc(x.follow_status) + '</span></div><div class="small">' + esc(x.detail) + '</div><div class="muted small">' + thD(x.shift_date, true) + ' ' + hm(x.ts) + ' · ' + shiftName(x.shift) + ' · ' + esc(x.staff_name) + '</div></div></div>';
+}
+
+async function tabAbn() {
+  const today = ST.info.today;
+  if (!ST.abnF) { const f = new Date(today + 'T00:00:00Z'); f.setUTCDate(f.getUTCDate() - 29); ST.abnF = { from: f.toISOString().slice(0, 10), to: today, type: '', follow: '' }; }
+  const F = ST.abnF, I = ST.info;
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>รายการผิดปกติ & การติดตาม</h2></div>' +
+    '<div class="card filters"><div><label>ตั้งแต่</label><input type="date" class="in" id="af" value="' + F.from + '"></div><div><label>ถึง</label><input type="date" class="in" id="at" value="' + F.to + '"></div>' +
+    '<div><label>ประเภท</label><select class="in" id="aty"><option value="">ทั้งหมด</option><option value="patrol">ผิดปกติจากจุดตรวจ</option><option value="incident">เหตุการณ์ที่แจ้ง</option></select></div>' +
+    '<div><label>สถานะติดตาม</label><select class="in" id="afo"><option value="">ทั้งหมด</option>' + I.follow.map(f => '<option>' + f + '</option>').join('') + '</select></div>' +
+    '<button class="btn pri" onclick="ST.abnF={from:$(\'#af\').value,to:$(\'#at\').value,type:$(\'#aty\').value,follow:$(\'#afo\').value};loadAbn()">ค้นหา</button></div>' +
+    '<div class="toolbar row sb"><span id="selInfo" class="muted">–</span><button class="btn pri" onclick="abnReport()">' + ic('file') + 'สร้างรายงานนำเสนอผู้บริหาร</button></div><div id="abnList"><div class="spin"></div></div>';
+  $('#aty').value = F.type; $('#afo').value = F.follow;
+  await loadAbn();
+}
+async function loadAbn() {
+  $('#abnList').innerHTML = '<div class="spin"></div>';
+  const r = await call('abnormalList', ST.abnF);
+  ST.abnItems = r.items; ST.abnSel = new Set();
+  const I = ST.info;
+  $('#abnList').innerHTML = r.items.map(x => {
+    const n = String(x.photos || '').split(',').filter(Boolean).length;
+    return '<div class="card item"><div class="row"><input type="checkbox" style="width:20px;height:20px" onchange="selItem(\'' + x.id + '\',this.checked)">' +
+      '<span class="pill ' + (x.type === 'incident' ? 'warn' : 'bad') + '">' + (x.type === 'incident' ? 'เหตุการณ์' : 'จุดตรวจ') + '</span>' + (x.severity ? '<span class="pill warn">' + esc(x.severity) + '</span>' : '') +
+      '<span class="muted small">' + thD(x.shift_date) + ' ' + hm(x.ts) + ' น. · ' + shiftName(x.shift) + ' · ' + esc(x.staff_name) + '</span></div>' +
+      '<div class="t">' + esc(x.title) + (x.type === 'incident' ? ' <span class="muted small">@ ' + esc(x.place) + '</span>' : '') + '</div><div>' + esc(x.detail) + '</div>' +
+      (x.action ? '<div class="small"><b>การดำเนินการ:</b> ' + esc(x.action) + '</div>' : '') +
+      (n ? '<div><button class="link" onclick="openPhotos(\'' + x.photos + '\')">' + ic('cam') + ' ดูรูป (' + n + ')</button></div>' : '') +
+      '<div class="fol"><select class="in" id="fs_' + x.id + '">' + I.follow.map(f => '<option' + (f === x.follow_status ? ' selected' : '') + '>' + f + '</option>').join('') + '</select>' +
+      '<input class="in" id="fn_' + x.id + '" value="' + esc(x.follow_note || '') + '" placeholder="ข้อสั่งการ / การแก้ไข"><button class="btn soft" onclick="saveFollow(this,\'' + x.type + '\',\'' + x.id + '\')">บันทึก</button></div>' +
+      (x.follow_by ? '<div class="muted small">อัปเดตโดย ' + esc(x.follow_by) + ' · ' + esc(x.follow_at) + '</div>' : '') + '</div>';
+  }).join('') || '<div class="empty">ไม่พบรายการ</div>';
+  selInfo();
+}
+function selItem(id, on) { on ? ST.abnSel.add(id) : ST.abnSel.delete(id); selInfo(); }
+function selInfo() { $('#selInfo').textContent = 'พบ ' + ST.abnItems.length + ' รายการ' + (ST.abnSel.size ? ' · เลือก ' + ST.abnSel.size + ' รายการสำหรับรายงาน' : ' · ไม่เลือก = รวมทุกรายการในช่วงวันที่'); }
+function abnReport() { previewReport({ kind: 'abnormal', from: ST.abnF.from, to: ST.abnF.to, ids: ST.abnSel.size ? [...ST.abnSel] : (ST.abnF.type || ST.abnF.follow ? ST.abnItems.map(x => x.id) : null) }); }
+async function saveFollow(btn, type, id) {
+  const it = (ST.abnItems || []).find(x => x.id === id) || {};
+  await busy(btn, async () => { await call('updateFollow', { type, id, shift_date: it.shift_date, follow_status: $('#fs_' + id).value, follow_note: $('#fn_' + id).value }); toast('บันทึกการติดตามแล้ว', 'ok'); });
+}
+
+async function tabRep() {
+  const staff = await call('listStaff');
+  const today = ST.info.today, wk = new Date(today + 'T00:00:00Z'); wk.setUTCDate(wk.getUTCDate() - 6);
+  const w = wk.toISOString().slice(0, 10), mo = today.slice(0, 8) + '01';
+  const pm = today.slice(0, 7);   // เดือนปัจจุบัน (ถึงวันนี้) — อีเมลอัตโนมัติวันที่ 1 จะส่งของเดือนที่แล้วให้เอง
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>พิมพ์รายงาน (PDF)</h2></div>' +
+    '<div class="card" style="margin-bottom:10px"><div class="row sb"><div><h3 style="margin:0">' + ic('file') + ' รายงานประจำเดือน</h3><div class="muted small">สรุปทั้งเดือน รายเวร รายวัน รายบุคคล จุดที่ขาดตรวจบ่อย และรายการผิดปกติพร้อมภาพ (ส่งอีเมลอัตโนมัติทุกวันที่ 1)</div></div>' +
+    '<div class="row"><input type="month" class="in" style="width:auto" id="rmM" value="' + pm + '"><button class="btn pri" onclick="previewReport({kind:\'monthly\',month:$(\'#rmM\').value})">ดูตัวอย่าง / พิมพ์</button></div></div></div>' +
+    '<div class="g3">' +
+    '<div class="card"><h3>' + ic('file') + ' รายงานรายเวร</h3><label class="f">วันที่</label><input type="date" class="in" id="rsD" value="' + today + '">' +
+    '<label class="f">เวร</label><select class="in" id="rsS">' + ST.info.shifts.map(s => '<option value="' + s.code + '">' + s.name + ' ' + s.label + '</option>').join('') + '</select>' +
+    '<button class="btn pri block" style="margin-top:16px" onclick="previewReport({kind:\'shift\',date:$(\'#rsD\').value,shift:$(\'#rsS\').value})">ดูตัวอย่าง / พิมพ์</button></div>' +
+    '<div class="card"><h3>' + ic('file') + ' รายงานรายบุคคล</h3><label class="f">เจ้าหน้าที่</label><select class="in" id="rpS">' + staff.map(s => '<option value="' + s.staff_id + '">' + esc(s.name) + (s.active ? '' : ' (ปิดใช้งาน)') + '</option>').join('') + '</select>' +
+    '<div class="row" style="flex-wrap:nowrap"><div style="flex:1"><label class="f">ตั้งแต่</label><input type="date" class="in" id="rpF" value="' + mo + '"></div><div style="flex:1"><label class="f">ถึง</label><input type="date" class="in" id="rpT" value="' + today + '"></div></div>' +
+    '<button class="btn pri block" style="margin-top:16px" onclick="previewReport({kind:\'person\',staff_id:$(\'#rpS\').value,from:$(\'#rpF\').value,to:$(\'#rpT\').value})">ดูตัวอย่าง / พิมพ์</button></div>' +
+    '<div class="card"><h3>' + ic('alert') + ' รายงานเหตุผิดปกติ (ผู้บริหาร)</h3><div class="row" style="flex-wrap:nowrap"><div style="flex:1"><label class="f">ตั้งแต่</label><input type="date" class="in" id="raF" value="' + w + '"></div><div style="flex:1"><label class="f">ถึง</label><input type="date" class="in" id="raT" value="' + today + '"></div></div>' +
+    '<div class="muted small" style="margin-top:8px">ต้องการเลือกเฉพาะบางรายการ ให้ไปที่แท็บ “เหตุผิดปกติ”</div>' +
+    '<button class="btn pri block" style="margin-top:16px" onclick="previewReport({kind:\'abnormal\',from:$(\'#raF\').value,to:$(\'#raT\').value})">ดูตัวอย่าง / พิมพ์</button></div></div>';
+}
+
+/* ---- staff ---- */
+async function tabStaff(list) {
+  list = list || await call('listStaff'); ST.staff = list;
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>รายชื่อเจ้าหน้าที่ รปภ. <span class="muted small">(ใช้งาน ' + list.filter(s => s.active).length + ' คน)</span></h2><button class="btn pri" onclick="staffForm()">' + ic('plus') + 'เพิ่มเจ้าหน้าที่</button></div>' +
+    '<div class="tw"><table class="t"><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>โทรศัพท์</th><th>สถานะ</th><th></th></tr>' +
+    list.map(s => '<tr class="' + (s.active ? '' : 'inactive') + '"><td>' + s.staff_id + '</td><td><b>' + esc(s.name) + '</b></td><td>' + esc(s.position) + '</td><td>' + esc(s.phone) + '</td><td>' +
+      (s.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิดใช้งาน</span>') + '</td><td style="white-space:nowrap;text-align:right"><button class="btn line sm" onclick="staffForm(\'' + s.staff_id + '\')">แก้ไข / รีเซ็ต PIN</button> ' +
+      '<button class="btn sm ' + (s.active ? 'line' : 'soft') + '" onclick="toggleStaff(this,\'' + s.staff_id + '\',' + !s.active + ')">' + (s.active ? 'ลบออก' : 'เปิดใช้งาน') + '</button></td></tr>').join('') + '</table></div>' +
+    '<p class="muted small">การ “ลบออก” เป็นการปิดใช้งาน เพื่อเก็บประวัติการปฏิบัติงานไว้ในรายงาน</p>';
+}
+function staffForm(id) {
+  const s = (ST.staff || []).find(x => x.staff_id === id) || {};
+  openModal(id ? 'แก้ไขเจ้าหน้าที่' : 'เพิ่มเจ้าหน้าที่',
+    '<label class="f">ชื่อ-สกุล <span class="req">*</span></label><input class="in" id="sN" value="' + esc(s.name || '') + '">' +
+    '<label class="f">ตำแหน่ง</label><input class="in" id="sP" value="' + esc(s.position || 'พนักงานรักษาความปลอดภัย') + '">' +
+    '<label class="f">โทรศัพท์</label><input class="in" id="sT" inputmode="tel" value="' + esc(s.phone || '') + '">' +
+    '<label class="f">PIN ' + (id ? '(เว้นว่าง = ไม่เปลี่ยน)' : '<span class="req">*</span>') + '</label><input class="in" id="sPin" inputmode="numeric" maxlength="6" placeholder="ตัวเลข 6 หลัก">' +
+    '<button class="btn pri block" style="margin-top:18px" onclick="saveStaff(this,\'' + (id || '') + '\')">บันทึก</button>');
+}
+async function saveStaff(btn, id) {
+  await busy(btn, async () => {
+    const list = await call('saveStaff', { staff_id: id, name: $('#sN').value, position: $('#sP').value, phone: $('#sT').value, pin: $('#sPin').value.trim() });
+    closeModal(); tabStaff(list); ST.info = await call('bootstrap'); toast('บันทึกแล้ว', 'ok');
+  });
+}
+async function toggleStaff(btn, id, active) {
+  if (!active && !confirmInline(btn)) return;
+  await busy(btn, async () => { const list = await call('deleteStaff', { staff_id: id, active }); tabStaff(list); ST.info = await call('bootstrap'); });
+}
+function confirmInline(btn) { if (btn.dataset.sure) return true; btn.dataset.sure = 1; btn.textContent = 'ยืนยัน?'; btn.classList.add('warn'); setTimeout(() => { if (btn.isConnected) { delete btn.dataset.sure; btn.textContent = 'ลบออก'; btn.classList.remove('warn'); } }, 3000); return false; }
+
+/* ---- เครื่องที่อนุมัติ (ลงทะเบียนเครื่อง รปภ.) ---- */
+async function tabDev(list) {
+  list = list || await call('listDevices');
+  const ST_TXT = { pending: ['รออนุมัติ', 'warn'], approved: ['อนุมัติแล้ว', 'ok'], revoked: ['ยกเลิกแล้ว', ''] };
+  const row = d => '<tr class="' + (d.status === 'revoked' ? 'inactive' : '') + '"><td><b>' + esc(d.staff_name) + '</b><div class="muted small">' + esc(d.staff_id) + '</div></td>' +
+    '<td><span class="pill pri" style="font-family:monospace;font-size:16px;letter-spacing:3px">' + esc(d.code) + '</span></td><td class="small">' + esc(d.ua || '-') + '</td>' +
+    '<td class="small">ขอ ' + esc(d.created_at) + (d.approved_at ? '<br>อนุมัติ ' + esc(d.approved_at) + ' · ' + esc(d.approved_by) : '') + (d.last_seen ? '<br>ใช้ล่าสุด ' + esc(d.last_seen) : '') + '</td>' +
+    '<td><span class="pill ' + ST_TXT[d.status][1] + '">' + ST_TXT[d.status][0] + '</span></td><td style="white-space:nowrap;text-align:right">' +
+    (d.status !== 'approved' ? '<button class="btn pri sm" onclick="devAct(this,\'' + d.dev_id + '\',\'approveDevice\')">อนุมัติ</button> ' : '') +
+    (d.status !== 'revoked' ? '<button class="btn line sm" onclick="devRevoke(this,\'' + d.dev_id + '\')">' + (d.status === 'pending' ? 'ปฏิเสธ' : 'ยกเลิกเครื่อง') + '</button>' : '') + '</td></tr>';
+  const pend = list.filter(d => d.status === 'pending'), rest = list.filter(d => d.status !== 'pending');
+  const head = '<tr><th>เจ้าหน้าที่</th><th>รหัสเครื่อง</th><th>อุปกรณ์</th><th>เวลา</th><th>สถานะ</th><th></th></tr>';
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>เครื่องที่ รปภ. ใช้เข้าระบบ</h2><button class="btn line" onclick="tabDev()">' + ic('refresh') + 'รีเฟรช</button></div>' +
+    '<div class="card" style="margin-bottom:10px;background:var(--pri-50);border:0"><b>วิธีอนุมัติ:</b> รปภ. ใส่ PIN บนเครื่องใหม่ → หน้าจอขึ้นรหัสเครื่อง 4 ตัว → <b>เทียบรหัสกับหน้าจอของ รปภ. ให้ตรงกันก่อน</b> แล้วกดอนุมัติ · ' +
+    'เครื่องหาย / ลาออก / เปลี่ยนเครื่อง ให้กด “ยกเลิกเครื่อง” (มีผลภายใน 1 นาที)</div>' +
+    '<h3 class="sec"><span>รออนุมัติ (' + pend.length + ')</span></h3>' + (pend.length ? '<div class="tw"><table class="t">' + head + pend.map(row).join('') + '</table></div>' : '<div class="empty">ไม่มีเครื่องรออนุมัติ</div>') +
+    '<h3 class="sec"><span>อนุมัติแล้ว / ยกเลิกแล้ว (' + rest.length + ')</span></h3>' + (rest.length ? '<div class="tw"><table class="t">' + head + rest.map(row).join('') + '</table></div>' : '<div class="empty">ยังไม่มี</div>');
+}
+async function devAct(btn, id, act) { await busy(btn, async () => { tabDev(await call(act, { dev_id: id })); toast(act === 'approveDevice' ? 'อนุมัติเครื่องแล้ว' : 'ยกเลิกเครื่องแล้ว', 'ok'); }); }
+function devRevoke(btn, id) {
+  if (!btn.dataset.sure) { btn.dataset.sure = 1; const t = btn.textContent; btn.textContent = 'ยืนยัน?'; btn.classList.add('warn'); setTimeout(() => { if (btn.isConnected) { delete btn.dataset.sure; btn.textContent = t; btn.classList.remove('warn'); } }, 3000); return; }
+  devAct(btn, id, 'revokeDevice');
+}
+
+/* ---- checkpoints ---- */
+async function tabCp(list) {
+  list = list || await call('listCheckpoints'); ST.cps = list;
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>จุดตรวจ <span class="muted small">(ใช้งาน ' + list.filter(c => c.active).length + ' จุด)</span></h2><div class="row"><button class="btn line" onclick="printQR()">พิมพ์ QR จุดตรวจ</button><button class="btn pri" onclick="cpForm()">' + ic('plus') + 'เพิ่มจุดตรวจ</button></div></div>' +
+    '<div class="tw"><table class="t"><tr><th>ลำดับ</th><th>รหัส</th><th>ชื่อจุดตรวจ</th><th>โซน</th><th>ความถี่</th><th>สถานะ</th><th></th></tr>' +
+    list.map(c => '<tr class="' + (c.active ? '' : 'inactive') + '"><td>' + c.sort + '</td><td>' + c.cp_id + '</td><td><b>' + esc(c.name) + '</b>' + (c.note ? '<div class="muted small">' + esc(c.note) + '</div>' : '') + '</td><td>' + esc(c.zone) + '</td><td>ทุก ' + c.every + ' ชม.</td><td>' +
+      (c.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td><td style="white-space:nowrap;text-align:right"><button class="btn line sm" onclick="cpForm(\'' + c.cp_id + '\')">แก้ไข</button> ' +
+      '<button class="btn sm ' + (c.active ? 'line' : 'soft') + '" onclick="toggleCp(this,\'' + c.cp_id + '\',' + !c.active + ')">' + (c.active ? 'ลบออก' : 'เปิดใช้งาน') + '</button></td></tr>').join('') + '</table></div>' +
+    '<p class="muted small">ติด QR ไว้ที่จุดตรวจ — รปภ.สแกนด้วยกล้องมือถือจะเปิดฟอร์มของจุดนั้นทันทีหลังใส่ PIN</p>';
+}
+async function promoteCp(i) {
+  const a = ST.adhoc[i]; if (!a) return;
+  try { ST.cps = await call('listCheckpoints'); } catch (e) { return toast(e.message, 'bad'); }
+  cpForm('', { name: a.name, note: a.lastDetail && a.abnormal ? 'เคยพบ: ' + a.lastDetail : '' });
+}
+function cpForm(id, pre) {
+  const c = (ST.cps || []).find(x => x.cp_id === id) || Object.assign({ sort: (ST.cps || []).length + 1, every: 1 }, pre || {});
+  openModal(id ? 'แก้ไขจุดตรวจ' : 'เพิ่มจุดตรวจ',
+    '<label class="f">ชื่อจุดตรวจ <span class="req">*</span></label><input class="in" id="cN" value="' + esc(c.name || '') + '">' +
+    '<label class="f">โซน / อาคาร</label><input class="in" id="cZ" value="' + esc(c.zone || '') + '">' +
+    '<div class="row" style="flex-wrap:nowrap"><div style="flex:1"><label class="f">ลำดับ</label><input class="in" id="cS" type="number" value="' + c.sort + '"></div>' +
+    '<div style="flex:1"><label class="f">ความถี่การตรวจ</label><select class="in" id="cE">' + [1, 2, 4, 8].map(n => '<option value="' + n + '"' + (n == c.every ? ' selected' : '') + '>ทุก ' + n + ' ชม.' + (n === 8 ? ' (1 ครั้ง/เวร)' : '') + '</option>').join('') + '</select></div></div>' +
+    '<label class="f">สิ่งที่ต้องตรวจ / หมายเหตุ</label><textarea class="in" id="cNo" rows="2" placeholder="เช่น ตรวจล็อกประตู ไฟส่องสว่าง ถังดับเพลิง">' + esc(c.note || '') + '</textarea>' +
+    '<button class="btn pri block" style="margin-top:18px" onclick="saveCp(this,\'' + (id || '') + '\')">บันทึก</button>');
+}
+async function saveCp(btn, id) {
+  await busy(btn, async () => { const list = await call('saveCheckpoint', { cp_id: id, name: $('#cN').value, zone: $('#cZ').value, sort: $('#cS').value, every: $('#cE').value, note: $('#cNo').value }); closeModal(); ST.tab === 'cp' ? tabCp(list) : tabDash(); toast('บันทึกแล้ว', 'ok'); });
+}
+async function toggleCp(btn, id, active) {
+  if (!active && !confirmInline(btn)) return;
+  await busy(btn, async () => tabCp(await call('deleteCheckpoint', { cp_id: id, active })));
+}
+/* ---- จุดเติมน้ำ ---- */
+async function tabWater(list) {
+  list = list || await call('listWaterPoints'); ST.wps = list;
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>จุดเติมน้ำ <span class="muted small">(ใช้งาน ' + list.filter(c => c.active).length + ' จุด)</span></h2><button class="btn pri" onclick="wpForm()">' + ic('plus') + 'เพิ่มจุดเติมน้ำ</button></div>' +
+    (list.length ? '<div class="tw"><table class="t"><tr><th>ลำดับ</th><th>รหัส</th><th>จุดบริการ</th><th>อาคาร / โซน</th><th>เติม 30 วัน</th><th>สถานะ</th><th></th></tr>' +
+    list.map(c => '<tr class="' + (c.active ? '' : 'inactive') + '"><td>' + c.sort + '</td><td>' + c.wp_id + '</td><td><b>' + esc(c.name) + '</b></td><td>' + esc(c.zone) + '</td><td>' + (c.times ? c.times + ' ครั้ง · <b>' + c.tanks + '</b> ถัง' : '<span class="muted">–</span>') + '</td><td>' +
+      (c.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td><td style="white-space:nowrap;text-align:right"><button class="btn line sm" onclick="wpForm(\'' + c.wp_id + '\')">แก้ไข</button> ' +
+      '<button class="btn sm ' + (c.active ? 'line' : 'soft') + '" onclick="toggleWp(this,\'' + c.wp_id + '\',' + !c.active + ')">' + (c.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน') + '</button></td></tr>').join('') + '</table></div>'
+      : '<div class="card empty">ยังไม่มีจุดเติมน้ำ — กด “เพิ่มจุดเติมน้ำ”</div>') +
+    '<p class="muted small">จุดที่เปิดใช้งานจะแสดงเป็นปุ่มให้ รปภ.แตะเลือกตอนบันทึกเติมน้ำ (เรียงตามลำดับ) · รปภ.ยังพิมพ์จุดอื่นเองได้ — ดูได้ที่การ์ด “การเติมน้ำ” ในหน้าภาพรวม</p>';
+}
+function wpForm(id, pre) {
+  const c = (ST.wps || []).find(x => x.wp_id === id) || Object.assign({ sort: (ST.wps || []).length + 1 }, pre || {});
+  openModal(id ? 'แก้ไขจุดเติมน้ำ' : 'เพิ่มจุดเติมน้ำ',
+    '<label class="f">ชื่อจุดบริการ <span class="req">*</span></label><input class="in" id="wpN" value="' + esc(c.name || '') + '" placeholder="เช่น ตู้น้ำดื่ม OPD ชั้น 1">' +
+    '<div class="row" style="flex-wrap:nowrap"><div style="flex:2"><label class="f">อาคาร / โซน</label><input class="in" id="wpZ" value="' + esc(c.zone || '') + '"></div>' +
+    '<div style="flex:1"><label class="f">ลำดับ</label><input class="in" id="wpS" type="number" value="' + c.sort + '"></div></div>' +
+    '<button class="btn pri block" style="margin-top:18px" onclick="saveWp(this,\'' + (id || '') + '\')">บันทึก</button>');
+}
+async function saveWp(btn, id) {
+  await busy(btn, async () => { const list = await call('saveWaterPoint', { wp_id: id, name: $('#wpN').value, zone: $('#wpZ').value, sort: $('#wpS').value }); closeModal(); ST.tab === 'water' ? tabWater(list) : tabDash(); toast('บันทึกแล้ว', 'ok'); });
+}
+async function toggleWp(btn, id, active) { await busy(btn, async () => tabWater(await call('deleteWaterPoint', { wp_id: id, active }))); }
+async function promoteWp(i) {
+  const p = (ST.wPlaces || [])[i]; if (!p) return;
+  try { ST.wps = await call('listWaterPoints'); } catch (e) { return toast(e.message, 'bad'); }
+  wpForm('', { name: p.name });
+}
+function printQR() {
+  const base = REMOTE ? location.href.split(/[?#]/)[0] : (ST.info.appUrl || location.href.split('?')[0]);
+  const cards = ST.cps.filter(c => c.active).map(c => {
+    const url = base + '?cp=' + encodeURIComponent(c.cp_id);
+    return '<div class="q"><img src="https://quickchart.io/qr?size=260&margin=1&text=' + encodeURIComponent(url) + '"><h2>' + esc(c.name) + '</h2><p>' + c.cp_id + ' · ' + esc(c.zone || '') + ' · ตรวจทุก ' + c.every + ' ชม.</p></div>';
+  }).join('');
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet"><style>@page{size:A4;margin:10mm}body{font-family:Sarabun,sans-serif;margin:0}.g{display:grid;grid-template-columns:1fr 1fr;gap:8mm}.q{border:2px solid #1d4ed8;border-radius:10px;padding:8mm;text-align:center;page-break-inside:avoid}.q img{width:55mm;height:55mm}.q h2{margin:4mm 0 1mm;font-size:20px;color:#1e3a8a}.q p{margin:0;color:#555}.hd{text-align:center;font-weight:700;margin-bottom:6mm}</style></head><body><div class="hd">' + esc(ST.info.hospital) + ' · จุดตรวจ รปภ. (สแกนเพื่อบันทึก)</div><div class="g">' + cards + '</div></body></html>';
+  openModal('QR จุดตรวจ', '<div class="row"><button class="btn pri" onclick="printReport()">' + ic('file') + 'พิมพ์</button></div><iframe class="rep" id="repFrame"></iframe>', true);
+  $('#repFrame').srcdoc = html;
+}
+
+/* ---- แจ้งเตือนอีเมล ---- */
+const MODE_TXT = { high: 'เฉพาะเหตุการณ์ระดับสูง/วิกฤต — ส่งทันที', all: 'ทุกรายการผิดปกติ — ส่งทันที', off: 'ไม่ส่งทันที (รวมในสรุปรายวันเท่านั้น)' };
+async function tabNotify(cfg) {
+  cfg = cfg || await call('notifyConfig');
+  ST.ncfg = cfg;
+  const hours = Array.from({ length: 24 }, (_, h) => '<option value="' + h + '"' + (h === cfg.dailyHour ? ' selected' : '') + '>' + p2(h) + ':10 น.</option>').join('');
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>แจ้งเตือนอีเมลผู้บริหาร</h2><div class="row">' +
+    '<button class="btn line" onclick="testMail(this)">ส่งอีเมลทดสอบ</button>' +
+    (window.MOCK_MAIL ? '<button class="btn line" onclick="showMockMail()">ดูอีเมลล่าสุด (เดโม)</button>' : '') +
+    '<button class="btn pri" onclick="recForm()">' + ic('plus') + 'เพิ่มผู้รับ</button></div></div>' +
+    (cfg.demo ? '<div class="card" style="background:#fff8e6;border-color:#e0ac3f;margin-bottom:10px">โหมดสาธิต: ระบบไม่ได้ส่งอีเมลจริง แต่สร้างเนื้อหาอีเมลให้ดูได้ด้วยปุ่ม “ดูอีเมลล่าสุด”</div>' : '') +
+    '<div class="g2"><div class="card"><h3>เกณฑ์การส่ง</h3>' +
+    '<label class="f"><input type="checkbox" id="nOn"' + (cfg.on ? ' checked' : '') + ' onchange="saveNotify()"> เปิดใช้งานการแจ้งเตือนอีเมล</label>' +
+    '<label class="f">แจ้งทันทีเมื่อ</label><select class="in" id="nMode" onchange="saveNotify()">' +
+    Object.keys(MODE_TXT).map(k => '<option value="' + k + '"' + (k === cfg.mode ? ' selected' : '') + '>' + MODE_TXT[k] + '</option>').join('') + '</select>' +
+    '<label class="f"><input type="checkbox" id="nDaily"' + (cfg.dailyOn ? ' checked' : '') + ' onchange="saveNotify()"> ส่งสรุปรายวัน (รายการผิดปกติที่เหลือ + % ความครอบคลุมของเมื่อวาน)</label>' +
+    '<label class="f">เวลาส่งสรุปรายวัน</label><select class="in" id="nHour" onchange="saveNotify()">' + hours + '</select>' +
+    '<label class="f"><input type="checkbox" id="nMonthly"' + (cfg.monthlyOn ? ' checked' : '') + ' onchange="saveNotify()"> ส่งรายงานประจำเดือนเป็น PDF ทุกวันที่ 1 เวลา 07:30 น. (ภาพเฉพาะกรณีผิดปกติ)</label>' +
+    '<label class="f">ลบรูป “กรณีปกติ” ที่เก่ากว่า</label><select class="in" id="nKeep" onchange="saveNotify()">' +
+    [[0, 'ไม่ลบ (เก็บทุกรูป)'], [3, '3 เดือน'], [6, '6 เดือน'], [12, '12 เดือน'], [24, '24 เดือน']].map(o => '<option value="' + o[0] + '"' + (o[0] === cfg.keepMonths ? ' selected' : '') + '>' + o[1] + '</option>').join('') + '</select>' +
+    '<div class="muted small" style="margin-top:6px">รูปผิดปกติและเหตุการณ์เก็บถาวรเสมอ · รูปที่ลบย้ายไปถังขยะ Drive กู้คืนได้ 30 วัน · ข้อมูลการตรวจในชีตยังอยู่ครบ</div>' +
+    '<div class="muted small" style="margin-top:10px">เหตุระดับสูง/วิกฤตจะส่งทันทีที่ รปภ. กดส่งรายงาน (ระบบตรวจซ้ำทุก 5 นาทีเผื่อส่งไม่สำเร็จ)</div></div>' +
+    '<div class="card"><h3>สถานะ</h3><table class="t"><tr><td>รายการรอแจ้งเตือน</td><td class="b">' + cfg.pending + ' รายการ</td></tr>' +
+    '<tr><td>โควตาอีเมลคงเหลือวันนี้</td><td class="b">' + cfg.quota + ' ฉบับ</td></tr>' +
+    '<tr><td>ผู้รับที่ใช้งาน</td><td class="b">' + cfg.recipients.filter(r => r.active).length + ' คน</td></tr>' +
+    '<tr><td>รายงานประจำเดือนที่ส่งล่าสุด</td><td class="b">' + (cfg.lastMonthly ? esc(monthTh(cfg.lastMonthly)) : '–') + '</td></tr></table>' +
+    '<button class="btn soft block" style="margin-top:10px" onclick="runNotify(this)">ตรวจและส่งรายการที่ค้างเดี๋ยวนี้</button>' +
+    '<button class="btn line block" style="margin-top:8px" onclick="runMonthly(this)">ส่งรายงานประจำเดือนที่แล้วตอนนี้ (PDF)</button></div></div>' +
+    '<div class="tw" style="margin-top:10px"><table class="t"><tr><th>อีเมล</th><th>ชื่อ / ตำแหน่ง</th><th class="c">แจ้งทันที</th><th class="c">สรุปรายวัน</th><th class="c">รายเดือน (PDF)</th><th>สถานะ</th><th></th></tr>' +
+    (cfg.recipients.map(r => '<tr class="' + (r.active ? '' : 'inactive') + '"><td>' + esc(r.email) + '</td><td><b>' + esc(r.name) + '</b>' + (r.note ? '<div class="muted small">' + esc(r.note) + '</div>' : '') + '</td>' +
+      '<td class="c">' + (r.immediate ? '<span class="pill bad">ทันที</span>' : '–') + '</td><td class="c">' + (r.daily ? '<span class="pill pri">รายวัน</span>' : '–') + '</td><td class="c">' + (r.monthly ? '<span class="pill ok">รายเดือน</span>' : '–') + '</td>' +
+      '<td>' + (r.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td>' +
+      '<td style="white-space:nowrap;text-align:right"><button class="btn line sm" onclick="recForm(\'' + esc(r.email) + '\')">แก้ไข</button> ' +
+      '<button class="btn sm ' + (r.active ? 'line' : 'soft') + '" onclick="toggleRec(this,\'' + esc(r.email) + '\',' + !r.active + ')">' + (r.active ? 'ปิด' : 'เปิด') + '</button></td></tr>').join('')
+      || '<tr><td colspan="7" class="muted">ยังไม่มีผู้รับอีเมล — กด “เพิ่มผู้รับ”</td></tr>') + '</table></div>';
+}
+function recForm(email) {
+  const r = (ST.ncfg.recipients || []).find(x => x.email === email) || { immediate: true, daily: true, monthly: true, active: true };
+  openModal(email ? 'แก้ไขผู้รับอีเมล' : 'เพิ่มผู้รับอีเมล',
+    '<label class="f">อีเมล <span class="req">*</span></label><input class="in" id="rE" type="email" value="' + esc(r.email || '') + '"' + (email ? ' disabled' : '') + '>' +
+    '<label class="f">ชื่อ / ตำแหน่ง</label><input class="in" id="rN" value="' + esc(r.name || '') + '" placeholder="เช่น ผู้อำนวยการ / หัวหน้างานบริหาร">' +
+    '<label class="f"><input type="checkbox" id="rI"' + (r.immediate ? ' checked' : '') + '> รับแจ้งเตือนทันที (เหตุด่วน)</label>' +
+    '<label class="f"><input type="checkbox" id="rD"' + (r.daily ? ' checked' : '') + '> รับสรุปรายวัน</label>' +
+    '<label class="f"><input type="checkbox" id="rM"' + (r.monthly ? ' checked' : '') + '> รับรายงานประจำเดือน (PDF แนบอีเมล)</label>' +
+    '<label class="f"><input type="checkbox" id="rA"' + (r.active !== false ? ' checked' : '') + '> เปิดใช้งาน</label>' +
+    '<button class="btn pri block" style="margin-top:16px" onclick="saveRec(this)">บันทึก</button>');
+}
+async function saveRec(btn) {
+  await busy(btn, async () => {
+    const cfg = await call('saveRecipient', { email: $('#rE').value, name: $('#rN').value, immediate: $('#rI').checked, daily: $('#rD').checked, monthly: $('#rM').checked, active: $('#rA').checked });
+    closeModal(); tabNotify(cfg); toast('บันทึกผู้รับแล้ว', 'ok');
+  });
+}
+async function toggleRec(btn, email, active) { await busy(btn, async () => tabNotify(await call('deleteRecipient', { email, active }))); }
+async function saveNotify() {
+  try {
+    const cfg = await call('saveNotifySettings', { on: $('#nOn').checked, mode: $('#nMode').value, dailyOn: $('#nDaily').checked, dailyHour: $('#nHour').value, monthlyOn: $('#nMonthly').checked, keepMonths: $('#nKeep').value });
+    ST.ncfg = cfg; toast('บันทึกการตั้งค่าแล้ว', 'ok');
+  } catch (e) { toast(e.message, 'bad'); }
+}
+async function testMail(btn) { await busy(btn, async () => { const r = await call('testMail', {}); toast('ส่งอีเมลทดสอบไปที่ ' + r.sent, 'ok'); }); }
+async function runNotify(btn) { await busy(btn, async () => { const r = await call('runNotifyNow', {}); toast('ส่งแจ้งเตือน ' + r.sent + ' ฉบับ', 'ok'); tabNotify(); }); }
+const monthTh = (ym) => { const [y, m] = String(ym).split('-').map(Number); return ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'][m - 1] + ' ' + (y + 543); };
+async function runMonthly(btn) {
+  await busy(btn, async () => { const r = await call('runMonthlyNow', {}); toast('ส่งรายงาน' + monthTh(r.month) + ' ถึง ' + r.to + ' แล้ว', 'ok'); tabNotify(); });
+}
+function showMockMail() {
+  const m = window.MOCK_MAIL || [];
+  if (!m.length) return toast('ยังไม่มีอีเมลในเดโม — ลองแจ้งเหตุระดับสูง/วิกฤต หรือกดส่งอีเมลทดสอบ', 'bad');
+  const last = m[m.length - 1];
+  openModal('ตัวอย่างอีเมล (เดโม)', '<div class="muted small">ถึง: ' + esc(last.to) + '<br>เรื่อง: <b>' + esc(last.subject) + '</b>' + ((last.attachments || []).length ? '<br>ไฟล์แนบ: ' + esc(last.attachments.map(a => a.filename).join(', ')) : '') + '</div><iframe class="rep" id="repFrame"></iframe>', true);
+  $('#repFrame').srcdoc = '<meta charset="utf-8"><body style="font-family:Sarabun,sans-serif">' + last.html + '</body>';
+}
+
+/* ---- users ---- */
+async function tabUsers(list) {
+  list = list || await call('listUsers'); ST.users = list;
+  $('#pane').innerHTML = '<div class="pane-hd"><h2>ผู้ใช้ระบบ (ผู้ดูแล / ผู้บริหาร)</h2><button class="btn pri" onclick="userForm()">' + ic('plus') + 'เพิ่มผู้ใช้</button></div>' +
+    '<div class="tw"><table class="t"><tr><th>ชื่อผู้ใช้</th><th>ชื่อ</th><th>บทบาท</th><th>สถานะ</th><th></th></tr>' +
+    list.map(u => '<tr class="' + (u.active ? '' : 'inactive') + '"><td>' + esc(u.username) + '</td><td><b>' + esc(u.name) + '</b></td><td>' + (u.role === 'admin' ? '<span class="pill pri">ผู้ดูแลระบบ</span>' : '<span class="pill">ผู้บริหาร</span>') + '</td><td>' +
+      (u.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td><td style="text-align:right"><button class="btn line sm" onclick="userForm(\'' + esc(u.username) + '\')">แก้ไข / รีเซ็ตรหัส</button></td></tr>').join('') + '</table></div>' +
+    '<p class="muted small">ผู้บริหาร: ดูภาพรวม รายการผิดปกติ บันทึกข้อสั่งการ และพิมพ์รายงาน · ผู้ดูแลระบบ: ทำได้ทั้งหมด</p>' +
+    '<div class="card" id="goLiveCard" style="margin-top:14px"><div class="spin"></div></div>';
+  const si = await call('systemInfo');
+  const tabs = si.testTabs.filter(t => t.rows);
+  $('#goLiveCard').innerHTML = '<h3>' + ic('check') + ' เริ่มใช้งานจริง ' + thD(si.goLiveDate) + '</h3>' +
+    (si.liveSince ? '<div class="pill ok">เริ่มใช้งานจริงแล้ว · ' + esc(si.liveSince) + '</div>' : '') +
+    '<p class="small">ย้ายข้อมูลทดสอบก่อนวันที่ ' + thD(si.goLiveDate) + ' ออกจากระบบ (เปลี่ยนชื่อแท็บเป็น “…_ทดสอบ” ไม่ลบ) และย้ายรูปทดสอบลงถังขยะ Drive — ข้อมูลตั้งแต่ ' + thD(si.goLiveDate) + ' ไม่ถูกแตะ · ไม่ส่งรายงานประจำเดือนของข้อมูลทดสอบ</p>' +
+    '<p class="small">ข้อมูลทดสอบที่พบ: <b>' + (tabs.length ? tabs.map(t => esc(t.name) + ' ' + t.rows + ' แถว').join(' · ') : 'ไม่มี') + '</b></p>' +
+    '<div class="row"><input class="in" id="glC" style="max-width:260px" placeholder="พิมพ์: เริ่มใช้งานจริง"><button class="btn pri" onclick="goLive(this)">ย้ายข้อมูลทดสอบ & เริ่มใช้งานจริง</button></div>';
+}
+async function goLive(btn) {
+  await busy(btn, async () => {
+    const r = await call('goLive', { confirm: $('#glC').value });
+    toast('ย้ายข้อมูลทดสอบแล้ว: ' + (r.moved.join(', ') || 'ไม่มี') + ' · รูป ' + r.trashed + ' รูป', 'ok');
+    tabUsers();
+  });
+}
+function userForm(un) {
+  const u = (ST.users || []).find(x => x.username === un) || { role: 'exec', active: true };
+  openModal(un ? 'แก้ไขผู้ใช้' : 'เพิ่มผู้ใช้',
+    '<label class="f">ชื่อผู้ใช้ <span class="req">*</span></label><input class="in" id="uU" value="' + esc(u.username || '') + '"' + (un ? ' disabled' : '') + '>' +
+    '<label class="f">ชื่อ-สกุล</label><input class="in" id="uN" value="' + esc(u.name || '') + '">' +
+    '<label class="f">บทบาท</label><select class="in" id="uR"><option value="exec"' + (u.role === 'exec' ? ' selected' : '') + '>ผู้บริหาร</option><option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>ผู้ดูแลระบบ</option></select>' +
+    '<label class="f">รหัสผ่าน ' + (un ? '(เว้นว่าง = ไม่เปลี่ยน)' : '<span class="req">*</span>') + '</label><input class="in" id="uP" type="password" placeholder="อย่างน้อย 8 ตัวอักษร">' +
+    '<label class="f">PIN ' + (un ? '(เว้นว่าง = ไม่เปลี่ยน)' : '<span class="req">*</span>') + '</label><input class="in" id="uPin" inputmode="numeric" maxlength="6" placeholder="ตัวเลข 6 หลัก">' +
+    '<label class="f"><input type="checkbox" id="uA"' + (u.active ? ' checked' : '') + '> เปิดใช้งาน</label>' +
+    '<button class="btn pri block" style="margin-top:18px" onclick="saveUser(this)">บันทึก</button>');
+}
+async function saveUser(btn) {
+  await busy(btn, async () => { const list = await call('saveUser', { username: $('#uU').value, name: $('#uN').value, role: $('#uR').value, password: $('#uP').value, pin: $('#uPin').value.trim(), active: $('#uA').checked }); closeModal(); tabUsers(list); toast('บันทึกแล้ว', 'ok'); });
+}
+
+init();
+</script>
+</body>
+</html>
