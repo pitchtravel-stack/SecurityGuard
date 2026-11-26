@@ -205,9 +205,9 @@ table.t th{background:#f6f8fc;font-size:13.5px;color:var(--muted)}
 <div id="toast"></div>
 <script>
 /* ================= ตั้งค่า ================= */
-const UI_VERSION = 'v2.0 (26 พ.ย. 69)';   // ต้องตรงกับ APP_VERSION ใน Core.gs
+const UI_VERSION = 'v2.1 (26 พ.ย. 69)';   // ต้องตรงกับ APP_VERSION ใน Core.gs
 /* ⚙️ URL ของ web app (ลงท้าย /exec) จาก Deploy > Manage deployments — ใช้เมื่อวางไฟล์นี้บน GitHub Pages */
-const API_URL = 'https://script.google.com/macros/s/AKfycbwNDcUdQSHfrA2T_2vKd5xRPk6kr95GOe5i5goMh5zKcOKBsqr6N2D3vWfL4AzbtXj6/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxNgilH1mQDQJrJ-FH1D4Wfq64LAAJV9pPVB2SOKuOr1rOOAbo4IWTh_amJlkTUU-6r/exec';
 const VIA_GAS = !!(window.google && google.script && google.script.run);
 const REMOTE = !VIA_GAS && /^https:\/\/script\.google\.com\/.+\/exec$/.test(API_URL) && API_URL.indexOf('ใส่รหัส') < 0;
 /* ลิงก์จาก QR จุดตรวจ (?cp=CP01) */
@@ -316,14 +316,18 @@ async function logout(silent) {
   ST.token = null; ST.user = null; store.set('sr_token', null); closeModal(); renderLogin();
 }
 function renderLogin(mode) {
-  if (mode) { ST.loginMode = mode; ST.pick = null; ST.pin = ''; }
+  if (mode) { ST.loginMode = mode; ST.pick = null; ST.pin = ''; ST.otpMail = ''; }
   const m = ST.loginMode;
   let body;
   if (m === 'user') {
-    body = '<label class="f">ชื่อผู้ใช้</label><input class="in" id="lu" autocomplete="username">' +
-      '<label class="f">รหัสผ่าน</label><input class="in" id="lp" type="password" autocomplete="current-password">' +
-      '<label class="f">PIN</label><input class="in" id="lpin" type="password" inputmode="numeric" maxlength="6" placeholder="4–6 หลัก" onkeydown="if(event.key===\'Enter\')userLogin(this)">' +
-      '<button class="btn pri block" style="margin-top:18px" onclick="userLogin(this)">เข้าสู่ระบบ</button>';
+    body = !ST.otpMail
+      ? '<label class="f">Gmail ที่ลงทะเบียนไว้</label><input class="in" id="lu" type="email" inputmode="email" autocomplete="email" placeholder="name@gmail.com" value="' + esc(localStorage.getItem('sr_email') || '') + '" onkeydown="if(event.key===\'Enter\')otpRequest(this)">' +
+        '<button class="btn pri block" style="margin-top:18px" onclick="otpRequest(this)">ขอรหัสเข้าใช้ทาง Gmail</button>' +
+        '<div class="muted small" style="margin-top:10px">ระบบจะส่งรหัส 6 หลักไปที่ Gmail ของท่าน (ใช้ได้ 10 นาที)</div>'
+      : '<div class="card" style="margin-top:12px;background:var(--pri-50);border:0">ส่งรหัสไปที่ <b>' + esc(ST.otpMail) + '</b> แล้ว</div>' +
+        '<label class="f">รหัส 6 หลักจากอีเมล</label><input class="in" id="lotp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••" style="font-size:24px;letter-spacing:8px;text-align:center;font-weight:700" oninput="this.value=this.value.replace(/\\D/g,\'\');if(this.value.length===6)otpVerify($(\'#otpGo\'))">' +
+        '<button class="btn pri block" id="otpGo" style="margin-top:18px" onclick="otpVerify(this)">ยืนยันรหัส</button>' +
+        '<div class="row sb" style="margin-top:10px"><button class="link" onclick="ST.otpMail=\'\';renderLogin()">เปลี่ยนอีเมล</button><button class="link" onclick="otpResend()">ส่งรหัสอีกครั้ง</button></div>';
   } else if (!ST.pick) {
     body = '<label class="f">เลือกชื่อของท่าน</label><input class="in" placeholder="ค้นหาชื่อ…" oninput="filterStaff(this.value)">' +
       '<div class="staff-list" id="staffList">' + staffButtons('') + '</div>';
@@ -378,12 +382,22 @@ async function retryPending(btn) {
     afterLogin(r);
   });
 }
-async function userLogin(btn) {
+/* ผู้ดูแล/ผู้บริหาร: Gmail + OTP */
+async function otpRequest(btn) {
+  const em = ($('#lu').value || '').trim().toLowerCase();
+  if (!em) return toast('กรุณากรอก Gmail', 'bad');
+  await busy(btn, async () => { await call('requestOtp', { email: em }); ST.otpMail = em; try { localStorage.setItem('sr_email', em); } catch (e) { } renderLogin(); setTimeout(() => $('#lotp') && $('#lotp').focus(), 50); });
+}
+async function otpVerify(btn) {
+  const c = ($('#lotp').value || '').trim();
+  if (!/^\d{6}$/.test(c)) return toast('กรอกรหัส 6 หลัก', 'bad');
+  if (btn.disabled) return;
   await busy(btn, async () => {
-    const r = await call('login', { type: 'user', username: $('#lu').value, password: $('#lp').value, pin: $('#lpin').value });
-    afterLogin(r);
+    try { const r = await call('verifyOtp', { email: ST.otpMail, code: c }); ST.otpMail = ''; afterLogin(r); }
+    catch (e) { if ($('#lotp')) $('#lotp').value = ''; throw e; }
   });
 }
+async function otpResend() { try { await call('requestOtp', { email: ST.otpMail }); toast('ส่งรหัสใหม่แล้ว', 'ok'); } catch (e) { toast(e.message, 'bad'); } }
 function afterLogin(r) { ST.pendPin = ''; ST.token = r.token; ST.user = r.user; store.set('sr_token', r.token); ST.pin = ''; ST.pick = null; toast('ยินดีต้อนรับ ' + r.user.name, 'ok'); route(); }
 
 /* ================= guard (โหมดส่งไว) ================= */
@@ -1071,10 +1085,10 @@ function showMockMail() {
 async function tabUsers(list) {
   list = list || await call('listUsers'); ST.users = list;
   $('#pane').innerHTML = '<div class="pane-hd"><h2>ผู้ใช้ระบบ (ผู้ดูแล / ผู้บริหาร)</h2><button class="btn pri" onclick="userForm()">' + ic('plus') + 'เพิ่มผู้ใช้</button></div>' +
-    '<div class="tw"><table class="t"><tr><th>ชื่อผู้ใช้</th><th>ชื่อ</th><th>บทบาท</th><th>สถานะ</th><th></th></tr>' +
-    list.map(u => '<tr class="' + (u.active ? '' : 'inactive') + '"><td>' + esc(u.username) + '</td><td><b>' + esc(u.name) + '</b></td><td>' + (u.role === 'admin' ? '<span class="pill pri">ผู้ดูแลระบบ</span>' : '<span class="pill">ผู้บริหาร</span>') + '</td><td>' +
-      (u.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td><td style="text-align:right"><button class="btn line sm" onclick="userForm(\'' + esc(u.username) + '\')">แก้ไข / รีเซ็ตรหัส</button></td></tr>').join('') + '</table></div>' +
-    '<p class="muted small">ผู้บริหาร: ดูภาพรวม รายการผิดปกติ บันทึกข้อสั่งการ และพิมพ์รายงาน · ผู้ดูแลระบบ: ทำได้ทั้งหมด</p>' +
+    '<div class="tw"><table class="t"><tr><th>ชื่อผู้ใช้</th><th>ชื่อ</th><th>Gmail</th><th>บทบาท</th><th>สถานะ</th><th></th></tr>' +
+    list.map(u => '<tr class="' + (u.active ? '' : 'inactive') + '"><td>' + esc(u.username) + '</td><td><b>' + esc(u.name) + '</b></td><td class="small">' + (u.email ? esc(u.email) : '<span class="pill bad">ยังไม่มี — เข้าระบบไม่ได้</span>') + '</td><td>' + (u.role === 'admin' ? '<span class="pill pri">ผู้ดูแลระบบ</span>' : '<span class="pill">ผู้บริหาร</span>') + '</td><td>' +
+      (u.active ? '<span class="pill ok">ใช้งาน</span>' : '<span class="pill">ปิด</span>') + '</td><td style="text-align:right"><button class="btn line sm" onclick="userForm(\'' + esc(u.username) + '\')">แก้ไข</button></td></tr>').join('') + '</table></div>' +
+    '<p class="muted small">เข้าระบบด้วย Gmail + รหัสทางอีเมล · ผู้บริหาร: ดูภาพรวม รายการผิดปกติ บันทึกข้อสั่งการ และพิมพ์รายงาน · ผู้ดูแลระบบ: ทำได้ทั้งหมด</p>' +
     '<div class="card" id="goLiveCard" style="margin-top:14px"><div class="spin"></div></div>';
   const si = await call('systemInfo');
   const tabs = si.testTabs.filter(t => t.rows);
@@ -1097,13 +1111,12 @@ function userForm(un) {
     '<label class="f">ชื่อผู้ใช้ <span class="req">*</span></label><input class="in" id="uU" value="' + esc(u.username || '') + '"' + (un ? ' disabled' : '') + '>' +
     '<label class="f">ชื่อ-สกุล</label><input class="in" id="uN" value="' + esc(u.name || '') + '">' +
     '<label class="f">บทบาท</label><select class="in" id="uR"><option value="exec"' + (u.role === 'exec' ? ' selected' : '') + '>ผู้บริหาร</option><option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>ผู้ดูแลระบบ</option></select>' +
-    '<label class="f">รหัสผ่าน ' + (un ? '(เว้นว่าง = ไม่เปลี่ยน)' : '<span class="req">*</span>') + '</label><input class="in" id="uP" type="password" placeholder="อย่างน้อย 8 ตัวอักษร">' +
-    '<label class="f">PIN ' + (un ? '(เว้นว่าง = ไม่เปลี่ยน)' : '<span class="req">*</span>') + '</label><input class="in" id="uPin" inputmode="numeric" maxlength="6" placeholder="ตัวเลข 6 หลัก">' +
+    '<label class="f">Gmail (ใช้เข้าระบบ · รับรหัสทางอีเมล) <span class="req">*</span></label><input class="in" id="uE" type="email" value="' + esc(u.email || '') + '" placeholder="name@gmail.com">' +
     '<label class="f"><input type="checkbox" id="uA"' + (u.active ? ' checked' : '') + '> เปิดใช้งาน</label>' +
     '<button class="btn pri block" style="margin-top:18px" onclick="saveUser(this)">บันทึก</button>');
 }
 async function saveUser(btn) {
-  await busy(btn, async () => { const list = await call('saveUser', { username: $('#uU').value, name: $('#uN').value, role: $('#uR').value, password: $('#uP').value, pin: $('#uPin').value.trim(), active: $('#uA').checked }); closeModal(); tabUsers(list); toast('บันทึกแล้ว', 'ok'); });
+  await busy(btn, async () => { const list = await call('saveUser', { username: $('#uU').value, name: $('#uN').value, role: $('#uR').value, email: $('#uE').value.trim().toLowerCase(), active: $('#uA').checked }); closeModal(); tabUsers(list); toast('บันทึกแล้ว', 'ok'); });
 }
 
 init();
